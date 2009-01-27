@@ -21,12 +21,12 @@ char *reverse(char *text) {
   // length is okay here because we didn't include the nul char
   start = malloc(length * sizeof(char));
 
-  int i;
-  for(i = length-1; i >= 0; i--) {
-    start[length-i-1] = text[i];
+  int i, j=0;
+  for(i = length-2; i >= 0; i--) {
+    start[j++] = text[i];
   }
   // replace what used to be the newline with a nul
-  start[length] = '\0';
+  start[j] = '\0';
 
   return start;
 }
