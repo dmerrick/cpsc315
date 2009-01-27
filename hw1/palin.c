@@ -43,13 +43,15 @@ int is_palindrome(char *text) {
 
   // loop through and check that the strings are equal
   while( *reversed != '\0' && *text != '\0') {
+    // compare the two
     if ( *reversed != *text) {
       return 0;
-    } else {
+    } else { // increment the two
       *reversed++;
       *text++;
     }
   }
+  // everything was fine, they're equal
   return 4;
 }
 
