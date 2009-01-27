@@ -55,7 +55,7 @@ int is_palindrome(char *text) {
   return 4;
 }
 
-int main(int argc,char *argv[]) {
+int main(int argc, char *argv[]) {
   char word[MAX];
   FILE *file;
 
