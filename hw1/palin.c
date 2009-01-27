@@ -18,6 +18,7 @@ char *reverse(char *text) {
     length++;
   }
 
+  // length is okay here because we didn't include the nul char
   start = malloc(length * sizeof(char));
 
   int i;
