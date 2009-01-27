@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #define MAX 81
 
 /**
@@ -6,7 +7,7 @@
  * @param text is a string to reverse
  * @return the location of the reversed string
  */
-char *reverse(const char *text) {
+char *reverse(char *text) {
   int length = 0; // the length of the input text
   char *start;    // the start of the reversed text
 
@@ -34,7 +35,7 @@ char *reverse(const char *text) {
  * @param text is a string to check
  * @return true if text is a palindrome
  */
-int is_palindrome(const char *text) {
+int is_palindrome(char *text) {
   printf("\nDEBUG: text = %s", text);
   printf("DEBUG: reverse = %s", reverse(text));
   //return text == reverse(text);
