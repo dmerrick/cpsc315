@@ -35,7 +35,7 @@ char *reverse(const char *text) {
  * @return true if text is a palindrome
  */
 int is_palindrome(const char *text) {
-  printf("DEBUG: text = %s", text);
+  printf("\nDEBUG: text = %s", text);
   printf("DEBUG: reverse = %s", reverse(text));
   //return text == reverse(text);
   return 0;
