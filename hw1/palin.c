@@ -37,10 +37,20 @@ char *reverse(char *text) {
  * @return true if text is a palindrome
  */
 int is_palindrome(char *text) {
-  printf("\nDEBUG: text = %s", text);
-  printf("DEBUG: reverse = %s", reverse(text));
-  //return text == reverse(text);
-  return 0;
+  char *reversed = reverse(text);
+  //printf("\nDEBUG: text = %s", text);
+  //printf("DEBUG: reverse = %s", reversed);
+
+  // loop through and check that the strings are equal
+  while( *reversed != '\0' && *text != '\0') {
+    if ( *reversed != *text) {
+      return 0;
+    } else {
+      *reversed++;
+      *text++;
+    }
+  }
+  return 4;
 }
 
 int main(int argc,char *argv[]) {
@@ -68,7 +78,7 @@ int main(int argc,char *argv[]) {
     while(fgets(word, MAX, file) != NULL) { 
       // only print the word if it's a palindrome
       if (is_palindrome(word)) {
-        printf("%s", reverse(word));
+        printf("%s\n", reverse(word));
       }
     }
 
