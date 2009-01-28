@@ -1,11 +1,14 @@
 CC=gcc 
 CFLAGS=-Wall -O
 
-OBJS = palin.o
+palin: palin.o
+	${CC} -o palin ${CFLAGS} palin.o
 
-palin: ${OBJS}
-	${CC} -o palin ${CFLAGS} ${OBJS}
+palin1: palin1.o
+	${CC} -o palin1 ${CFLAGS} palin1.o
+
+all: palin palin1
 
 clean:
-	rm -f palin palin.o
+	rm -f palin palin1 *.o *~
 
