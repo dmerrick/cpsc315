@@ -55,6 +55,21 @@ int is_palindrome(char *text) {
   return 4;
 }
 
+/**
+ * Returns true if the given string is five characters long.
+ * @param text is a string to check
+ * @return true if text is a palindrome
+ */
+int is_five_chars(char *text) {
+  int length = 0;
+  // loop through, but break early if we go past five
+  while(*text != '\0' && length <= 6) {
+    text++;
+    length++;
+  }
+  return length == 6;
+}
+
 int main(int argc, char *argv[]) {
   char word[MAX];
   FILE *file;
@@ -79,7 +94,7 @@ int main(int argc, char *argv[]) {
     // finally stopping on the NULL pointer
     while(fgets(word, MAX, file) != NULL) { 
       // only print the word if it's a palindrome
-      if (is_palindrome(word)) {
+      if (is_five_chars(word) && is_palindrome(word)) {
         printf("%s\n", reverse(word));
       }
     }
@@ -95,6 +110,9 @@ int main(int argc, char *argv[]) {
 Here is some example text.
 wow
 racecar
-1234567890
+1234
+12345
+123456
 france
+AINIA
 */
