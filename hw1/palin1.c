@@ -58,7 +58,7 @@ int is_palindrome(char *text) {
 /**
  * Returns true if the given string is five characters long.
  * @param text is a string to check
- * @return true if text is a palindrome
+ * @return true if text exactly five chars long
  */
 int is_five_chars(char *text) {
   int length = 0;
