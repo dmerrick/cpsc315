@@ -1,17 +1,31 @@
 CC=gcc 
-CFLAGS=-Wall -O
+CFLAGS=-Wall -O 
 
-palin: palin.o
-	${CC} -o palin ${CFLAGS} palin.o
+D1=-Dcase1
 
-palin1: palin1.o
-	${CC} -o palin1 ${CFLAGS} palin1.o
+palin: palin.c
+	$(CC) $(CFLAGS) -o palin palin.c
 
-palin2: palin2.o
-	${CC} -o palin2 ${CFLAGS} palin2.o
+palin1: palin1.c
+	$(CC) $(CFLAGS) -o palin1 palin1.c
 
-all: palin palin1 palin2
+palin2d1: palin2.c
+	$(CC) $(CFLAGS) -Dcase1 -o palin2d1 palin2.c
+
+palin2d32: palin2.c
+	$(CC) $(CFLAGS) -Dcase32 -o palin2d32 palin2.c
+
+palin2d256: palin2.c
+	$(CC) $(CFLAGS) -Dcase256 -o palin2d256 palin2.c
+
+palin2d1024: palin2.c
+	$(CC) $(CFLAGS) -Dcase1024 -o palin2d1024 palin2.c
+
+palin2d8192: palin2.c
+	$(CC) $(CFLAGS) -Dcase8192 -o palin2d8192 palin2.c
+
+all: palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192
 
 clean:
-	rm -f palin palin1 palin2 *.o *~
+	rm -f palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192 *.o *~
 
