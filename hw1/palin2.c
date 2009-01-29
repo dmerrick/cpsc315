@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 #define MAX 81
+#define BUFFSIZE 32
 
 /**
  * Returns the reverse of a given string.
@@ -70,6 +76,39 @@ int is_five_chars(char *text) {
   return length == 6;
 }
 
+char my_getc(int fd) {
+
+  static char buf[BUFFSIZE];
+  static char *bufp = buf;
+  static int n=0;
+
+  if (n == 0) {
+    n = read(fd, buf, sizeof buf);
+    bufp = buf;
+  }
+  if (--n >= 0) {
+    return (unsigned char) *bufp++;
+  } else {
+    return -1;
+  }
+//  return (--n >=0) ? (unsigned char) *bufp++ : -1;
+}
+
+int my_gets(char *text, int max, int fd) {
+  char newest;
+  while ((newest = my_getc(fd)) != '\n' && newest != -1) {
+    *text = newest;
+    *text++;
+  }
+
+  *text = '\n';
+  *text++;
+  *text = '\0';
+
+  if (newest == -1) { return -1; }
+  return 0;
+}
+
 int main(int argc, char *argv[]) {
   char word[MAX];
   FILE *file;
@@ -81,26 +120,30 @@ int main(int argc, char *argv[]) {
   }
 
   // open the file for reading
-  file = fopen(argv[1], "r"); 
+  file = open(argv[1], O_RDONLY); 
 
   // make sure we can successfully open the file
-  if(file == NULL) {
-    printf("error: can't open file %s\n", argv[1]);
+  if(!file) {
+    fprintf(stderr, "error: can't open file %s\n", argv[1]);
     return 2;
 
   } else { // open was successful
-    
+   
+    // attempt to display a single character
+      //printf("%c\n", my_getc(file));
+
     // loop through, line by line
     // finally stopping on the NULL pointer
-    while(fgets(word, MAX, file) != NULL) { 
+    while(my_gets(word, MAX, file) != -1) { 
       // only print the word if it's a palindrome
       if (is_five_chars(word) && is_palindrome(word)) {
         printf("%s\n", reverse(word));
       }
     }
+    
 
     // close the file
-    fclose(file);
+    close(file);
     // return successfully
     return 0;
   }
