@@ -1,0 +1,30 @@
+Programming Project 1
+
+Dana Merrick
+CPSC315 1/29/09
+
+1) How To Compile and Run
+Once you extract the tarball, all you need to do is run:
+
+make all
+
+This will build all of the needed binaries. You may need to edit the Makefile to configure the location of your dictionary file.
+
+At that point you can run "make test", which will generate a number of .out files, one for each task. If you need to rebuild a certain binary for whatever reason, just specify it by name, i.e. "make palin2d256".
+
+2) Requested Input From Professor Yoon
+
+Although I have much experience READING C/C++, I have very little experience writing it. Using best practices is important to me, and I'm sure there is a lot of room for improvement here. Please let me know anything that you think I could benefit from.
+
+3) Output to Expect
+
+Besides the output from the various make tasks, you the output of these programs should be very similar to that of grep.
+
+4) Anything Else
+
+"make time" will time each execution, as requested in question 2d. The tests are run in order from fastest to slowest.
+
+There are a number of make tasks you can use, such as clean, and package.
+
+I used git for SCM during this project. The git repo can be found here:
+http://github.com/dmerrick/cpsc315/tree/master
