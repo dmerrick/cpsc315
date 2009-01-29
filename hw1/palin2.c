@@ -44,8 +44,6 @@ char *reverse(char *text) {
  */
 int is_palindrome(char *text) {
   char *reversed = reverse(text);
-  //printf("\nDEBUG: text = %s", text);
-  //printf("DEBUG: reverse = %s", reversed);
 
   // loop through and check that the strings are equal
   while( *reversed != '\0' && *text != '\0') {
@@ -76,36 +74,57 @@ int is_five_chars(char *text) {
   return length == 6;
 }
 
+/**
+ * Returns a char from a given file.
+ * Much advice on this was taken from the ANSI C book.
+ * @param a file descriptor
+ * @return a char
+ */
 char my_getc(int fd) {
 
   static char buf[BUFFSIZE];
   static char *bufp = buf;
   static int n=0;
 
+  // check if the buffer is empty
   if (n == 0) {
+    // read the file to the buffer
     n = read(fd, buf, sizeof buf);
     bufp = buf;
   }
+
   if (--n >= 0) {
     return (unsigned char) *bufp++;
   } else {
+    // there was a problem
     return -1;
   }
-//  return (--n >=0) ? (unsigned char) *bufp++ : -1;
 }
 
+/**
+ * My implementation of fgetc.
+ * @param a char array to put the line into
+ * @param the size of the char array
+ * @param a file descriptor
+ * @return status of the read
+ */
 int my_gets(char *text, int max, int fd) {
+  // a variable to represent the latest char read
   char newest;
   while ((newest = my_getc(fd)) != '\n' && newest != -1) {
+    // copy the char to the text array
     *text = newest;
     *text++;
   }
 
+  // added this to keep with the fgets behavior
   *text = '\n';
   *text++;
   *text = '\0';
 
+  // return the error if we found one
   if (newest == -1) { return -1; }
+  // otherwise return successfully 
   return 0;
 }
 
@@ -129,11 +148,8 @@ int main(int argc, char *argv[]) {
 
   } else { // open was successful
    
-    // attempt to display a single character
-      //printf("%c\n", my_getc(file));
-
     // loop through, line by line
-    // finally stopping on the NULL pointer
+    // finally stopping on the end of the file
     while(my_gets(word, MAX, file) != -1) { 
       // only print the word if it's a palindrome
       if (is_five_chars(word) && is_palindrome(word)) {
@@ -141,7 +157,6 @@ int main(int argc, char *argv[]) {
       }
     }
     
-
     // close the file
     close(file);
     // return successfully
