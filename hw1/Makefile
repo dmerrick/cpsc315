@@ -29,7 +29,7 @@ all: palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192
 clean:
 	rm -f palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192 *.o *~ *.out
 package:
-	tar czvf project1.tar.gz README Makefile *.c *.out
+	tar czvf project1.tar.gz README Makefile *.c my_output
 
 test:
 	./palin $(DICTFILE) > palin.out
