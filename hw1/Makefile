@@ -3,6 +3,8 @@ CFLAGS=-Wall -O
 
 DICTFILE=/usr/share/dict/words
 
+all: palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192
+
 palin: palin.c
 	$(CC) $(CFLAGS) -o palin palin.c
 
@@ -24,10 +26,9 @@ palin2d1024: palin2.c
 palin2d8192: palin2.c
 	$(CC) $(CFLAGS) -Dcase8192 -o palin2d8192 palin2.c
 
-all: palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192
-
 clean:
 	rm -f palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192 *.o *~ *.out
+
 package:
 	tar czvf project1.tar.gz README Makefile *.c my_output
 
