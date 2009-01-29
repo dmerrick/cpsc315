@@ -6,7 +6,27 @@
 #include <unistd.h>
 
 #define MAX 81
+
+#ifdef case1
+#define BUFFSIZE 1
+#endif
+
+#ifdef case32
 #define BUFFSIZE 32
+#endif
+
+#ifdef case256
+#define BUFFSIZE 256
+#endif
+
+#ifdef case1024
+#define BUFFSIZE 1024
+#endif
+
+#ifdef case8192
+#define BUFFSIZE 8192
+#endif
+
 
 /**
  * Returns the reverse of a given string.
