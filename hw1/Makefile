@@ -1,7 +1,7 @@
 CC=gcc 
 CFLAGS=-Wall -O 
 
-D1=-Dcase1
+DICTFILE=/usr/share/dict/words
 
 palin: palin.c
 	$(CC) $(CFLAGS) -o palin palin.c
@@ -27,7 +27,15 @@ palin2d8192: palin2.c
 all: palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192
 
 clean:
-	rm -f palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192 *.o *~
+	rm -f palin palin1 palin2d1 palin2d32 palin2d256 palin2d1024 palin2d8192 *.o *~ *.out
 package:
-	tar czvf project1.tar.gz README Makefile *.c
+	tar czvf project1.tar.gz README Makefile *.c *.out
 
+test:
+	./palin $(DICTFILE) > palin.out
+	./palin1 $(DICTFILE) > palin1.out
+	./palin2d1 $(DICTFILE) > palin2d1.out
+	./palin2d32 $(DICTFILE) > palin2d32.out
+	./palin2d256 $(DICTFILE) > palin2d256.out
+	./palin2d1024 $(DICTFILE) > palin2d1024.out
+	./palin2d8192 $(DICTFILE) > palin2d8192.out
