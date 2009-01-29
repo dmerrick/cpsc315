@@ -22,7 +22,7 @@ Besides the output from the various make tasks, you the output of these programs
 
 4) Anything Else
 
-"make time" will time each execution, as requested in question 2d. The tests are run in order from fastest to slowest.
+"make time" will time each execution, as requested in question 2d. The tests are run in order from fastest to slowest, with the first (non 5 char limit) program being executed last.
 
 There are a number of make tasks you can use, such as clean, and package.
 

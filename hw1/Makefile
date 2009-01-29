@@ -42,12 +42,12 @@ test:
 	./palin2d8192 $(DICTFILE) > palin2d8192.out
 
 time:
-	time ./palin $(DICTFILE) >/dev/null 2>&1
 	time ./palin1 $(DICTFILE) >/dev/null 2>&1
-	time ./palin2d1 $(DICTFILE) >/dev/null 2>&1
-	time ./palin2d32 $(DICTFILE) >/dev/null 2>&1
-	time ./palin2d256 $(DICTFILE) >/dev/null 2>&1
-	time ./palin2d1024 $(DICTFILE) >/dev/null 2>&1
 	time ./palin2d8192 $(DICTFILE) >/dev/null 2>&1
+	time ./palin2d1024 $(DICTFILE) >/dev/null 2>&1
+	time ./palin2d256 $(DICTFILE) >/dev/null 2>&1
+	time ./palin2d32 $(DICTFILE) >/dev/null 2>&1
 	time grep -q '^\(.\)\(.\).\2\1$$' $(DICTFILE)
+	time ./palin2d1 $(DICTFILE) >/dev/null 2>&1
+	time ./palin $(DICTFILE) >/dev/null 2>&1
 
