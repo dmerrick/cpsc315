@@ -25,21 +25,29 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	switch (fork()) {
-	case -1:
-		perror("Fork");
-		exit(2);
-	case 0:				/* In the child */
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[0]);
-		close(fd[1]);
-		execl("/usr/bin/who", "who", (char *) 0);
-		exit(3);
-	default:				/* In the parent */
-		dup2(fd[0], STDIN_FILENO);
-		close(fd[0]);
-		close(fd[1]);
-		execl("/usr/bin/wc", "wc", (char *) 0);
-		exit(4);
-	}	
+  // this represents the number of times we will have to loop
+  int loops = argc - 2;
+
+  while (loops > 0) {
+	  switch (fork()) {
+	  case -1:
+		  perror("Fork");
+		  exit(2);
+	  case 0:				/* In the child */
+		  dup2(fd[1], STDOUT_FILENO);
+		  close(fd[0]);
+		  close(fd[1]);
+		  execl("/usr/bin/who", "who", (char *) 0);
+		  exit(3);
+	  default:				/* In the parent */
+		  dup2(fd[0], STDIN_FILENO);
+		  close(fd[0]);
+		  close(fd[1]);
+		  execl("/usr/bin/wc", "wc", (char *) 0);
+		  exit(4);
+	  }	
+    // decrement loops
+    loops--;
+  }
+  return 0;
 }
