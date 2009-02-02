@@ -1,7 +1,7 @@
 CC=gcc 
 CFLAGS=-Wall -O
 
-all: proc forktest parent child whowc unix_pipe
+all: proc forktest parent child whowc unix_pipe mypipe
 
 proc: proc.c
 	${CC} -o proc ${CFLAGS} proc.c
@@ -21,5 +21,8 @@ whowc: whowc.c
 unix_pipe: unix_pipe.c
 	${CC} -o unix_pipe ${CFLAGS} unix_pipe.c
 
+mypipe: mypipe.c
+	${CC} -o mypipe ${CFLAGS} mypipe.c
+
 clean:
-	rm -f *.o proc forktest parent child whowc unix_pipe
+	rm -f *.o proc forktest parent child whowc unix_pipe mypipe
