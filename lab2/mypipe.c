@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
 
   // this represents the number of times we will have to loop
   int loops = argc - 2;
+  // the commands to execute, left and right side
+  char lcmd[100], rcmd[100];
 
   while (loops > 0) {
 	  switch (fork()) {
@@ -37,13 +39,20 @@ int main(int argc, char *argv[])
 		  dup2(fd[1], STDOUT_FILENO);
 		  close(fd[0]);
 		  close(fd[1]);
-		  execl("/usr/bin/who", "who", (char *) 0);
+
+      // set up command to execute
+      sprintf(lcmd,"/usr/bin/%s",argv[1]);
+		  execl(lcmd, argv[1], (char *) 0);
+
 		  exit(3);
 	  default:				/* In the parent */
 		  dup2(fd[0], STDIN_FILENO);
 		  close(fd[0]);
 		  close(fd[1]);
-		  execl("/usr/bin/wc", "wc", (char *) 0);
+
+      // set up command to execute
+      sprintf(rcmd,"/usr/bin/%s",argv[2]);
+		  execl(rcmd, argv[2], (char *) 0);
 		  exit(4);
 	  }	
     // decrement loops
