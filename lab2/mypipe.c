@@ -1,5 +1,7 @@
 /* 
  *  mypipe.c - emulates cmd1 | cmd2 | ... | cmdn
+ *
+ *  Currently only works for programs in the /usr/bin/ directory.
  */
 
 #include <stdio.h>
@@ -30,31 +32,41 @@ int main(int argc, char *argv[])
   // the commands to execute, left and right side
   char lcmd[100], rcmd[100];
 
-  while (loops > 0) {
-	  switch (fork()) {
-	  case -1:
-		  perror("Fork");
-		  exit(2);
-	  case 0:				/* In the child */
-		  dup2(fd[1], STDOUT_FILENO);
-		  close(fd[0]);
-		  close(fd[1]);
+  // the current arguement indices we're using
+  int i=1,j=2;
 
-      // set up command to execute
-      sprintf(lcmd,"/usr/bin/%s",argv[1]);
-		  execl(lcmd, argv[1], (char *) 0);
+  while ( loops > 0 ) {
+	  switch ( fork() ) {
+	    case -1:
+		    perror("Fork");
+		    exit(2);
+	    case 0:
+		    dup2(fd[1], STDOUT_FILENO);
+		    close(fd[0]);
+		    close(fd[1]);
 
-		  exit(3);
-	  default:				/* In the parent */
-		  dup2(fd[0], STDIN_FILENO);
-		  close(fd[0]);
-		  close(fd[1]);
+        // set up command to execute
+        sprintf(lcmd,"/usr/bin/%s",argv[i]);
+        // and execute it
+		    execl(lcmd, argv[i], (char *) 0);
 
-      // set up command to execute
-      sprintf(rcmd,"/usr/bin/%s",argv[2]);
-		  execl(rcmd, argv[2], (char *) 0);
-		  exit(4);
+		    exit(3);
+	    default:
+		    dup2(fd[0], STDIN_FILENO);
+		    close(fd[0]);
+		    close(fd[1]);
+
+        // set up command to execute
+        sprintf(rcmd,"/usr/bin/%s",argv[j]);
+        // and execute it
+		    execl(rcmd, argv[j], (char *) 0);
+  
+		    exit(4);
 	  }	
+
+    // move the indices
+    i++;
+    j++;
     // decrement loops
     loops--;
   }
