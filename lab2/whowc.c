@@ -9,6 +9,8 @@
 int main(void)
 {
 	int fd[2];
+  // fd[0] is for reading
+  // fd[1] is for writing
 
 	if (pipe(fd) == -1) {
 		perror("Pipe");
