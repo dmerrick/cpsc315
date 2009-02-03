@@ -3,15 +3,15 @@ Dana Merrick - CPSC315
 Operating System Concepts - 8th Ed.
 
 === Chapter One ===
-1.18) 
+1.18) Clustered systems are composed of two or more separate machines, while multiprocessor systems have multiple processors on a single machine. In order for two computers to cooperate to provide a high availability service, the machines must be both synchronized (networked) and redundant.
 
-1.21) 
+1.21) Network computers aren't as robust as normal computers, and instead rely on another computer -- such as a server or mainframe -- to perform most of the everyday computation. A good example of this is a thin client, which uses a server computer for computation, but the client itself mainly works with IO between the user and the server. 
 
-1.22)
+1.22) An interrupt is a way for a piece of hardware or a process to signal an event to the processor. When the processor receives the interrupt, the it stops what it was doing and transfers execution to a fixed location, and upon returning from that location, it returns to its original task. Traps are software generated interrupts that normally represent an error or exception, such as dividing by zero.
 
-1.24) 
+1.24) It is possible for a machine to be secure without hardware based user/kernel mode switching, but it would be very, very difficult to implement without any security flaws. Adding the mode bit to the hardware provides a theoretically unbeatable physical protection that cannot be circumvented with software hacks. While it is technically possible to have a secure OS without the hardware mode bit, it is unfeasible. 
 
-1.26) 
+1.26) Suppose two processors working with data received from the same location in memory. If one of the processes has begun manipulating the data, say, incrementing the value of the data in memory by one, and the other has not, the caches will differ.
 
 === Chapter Two ===
 2.16)
