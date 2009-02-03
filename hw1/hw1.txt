@@ -1,0 +1,25 @@
+Homework 1
+Dana Merrick - CPSC315
+Operating System Concepts - 8th Ed.
+
+=== Chapter One ===
+1.18) 
+
+1.21) 
+
+1.22)
+
+1.24) 
+
+1.26) 
+
+=== Chapter Two ===
+2.16)
+
+2.20)
+
+2.23) 
+
+2.24) 
+
+2.25) 
