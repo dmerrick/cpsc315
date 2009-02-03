@@ -1,27 +1,65 @@
-Homework 1
-Dana Merrick - CPSC315
-Operating System Concepts - 8th Ed.
+Homework 1 Dana Merrick - CPSC315 Operating System Concepts - 8th Ed.
 
-=== Chapter One ===
-1.18) Clustered systems are composed of two or more separate machines, while multiprocessor systems have multiple processors on a single machine. In order for two computers to cooperate to provide a high availability service, the machines must be both synchronized (networked) and redundant.
+=== Chapter One === 1.18) Clustered systems are composed of two or more
+separate machines, while multiprocessor systems have multiple processors
+on a single machine. In order for two computers to cooperate to provide
+a high availability service, the machines must be both synchronized
+(networked) and redundant.
 
-1.21) Network computers aren't as robust as normal computers, and instead rely on another computer -- such as a server or mainframe -- to perform most of the everyday computation. A good example of this is a thin client, which uses a server computer for computation, but the client itself mainly works with IO between the user and the server. 
+1.21) Network computers aren't as robust as normal computers, and
+instead rely on another computer -- such as a server or mainframe --
+to perform most of the everyday computation. A good example of this is
+a thin client, which uses a server computer for computation, but the
+client itself mainly works with IO between the user and the server.
 
-1.22) An interrupt is a way for a piece of hardware or a process to signal an event to the processor. When the processor receives the interrupt, the it stops what it was doing and transfers execution to a fixed location, and upon returning from that location, it returns to its original task. Traps are software generated interrupts that normally represent an error or exception, such as dividing by zero.
+1.22) An interrupt is a way for a piece of hardware or a process to
+signal an event to the processor. When the processor receives the
+interrupt, the it stops what it was doing and transfers execution to
+a fixed location, and upon returning from that location, it returns to
+its original task. Traps are software generated interrupts that normally
+represent an error or exception, such as dividing by zero.
 
-1.24) It is possible for a machine to be secure without hardware based user/kernel mode switching, but it would be very, very difficult to implement without any security flaws. Adding the mode bit to the hardware provides a theoretically unbeatable physical protection that cannot be circumvented with software hacks. While it is technically possible to have a secure OS without the hardware mode bit, it is unfeasible. 
+1.24) It is possible for a machine to be secure without hardware based
+user/kernel mode switching, but it would be very, very difficult to
+implement without any security flaws. Adding the mode bit to the hardware
+provides a theoretically unbeatable physical protection that cannot be
+circumvented with software hacks. While it is technically possible to
+have a secure OS without the hardware mode bit, it is unfeasible.
 
-1.26) Suppose two processors working with data received from the same location in memory. If one of the processes has begun manipulating the data, say, incrementing the value of the data in memory by one, and the other has not, the caches will differ.
+1.26) Suppose two processors working with data received from the same
+location in memory. If one of the processes has begun manipulating the
+data, say, incrementing the value of the data in memory by one, and the
+other has not, the caches will differ.
 
-=== Chapter Two ===
-2.16) Sharing the same system call interface is advantageous because it encourages the use of kernel mode, it allows for a standard API to be used across an entire operating system, and it simplifies the number of libraries to require when building code. It also allows for the GNU/Linux OS to blur the lines between files and devices.
+=== Chapter Two === 2.16) Sharing the same system call interface is
+advantageous because it encourages the use of kernel mode, it allows
+for a standard API to be used across an entire operating system, and it
+simplifies the number of libraries to require when building code. It also
+allows for the GNU/Linux OS to blur the lines between files and devices.
 
-It could be disadvantageous because consolidation of libraries leads to namespace conflicts.
+It could be disadvantageous because consolidation of libraries leads to
+namespace conflicts.
 
-2.20) Setting file attributes could be an example of a layering conflict, insomuch as a system call might need to know a very accurate version of the system time to set its mtime or ctime attribute, but that requires its own system call. 
+2.20) Setting file attributes could be an example of a layering conflict,
+insomuch as a system call might need to know a very accurate version of
+the system time to set its mtime or ctime attribute, but that requires
+its own system call.
 
-2.23) Virtual machines allow an operating system designer to abstract the idea of hardware and allow their code to run correctly regardless of the execution environment. For the user, this is nice because virtual machines are isolated and protected from one another, and because changing the current operating system is far more simple than if the machine was running natively. 
+2.23) Virtual machines allow an operating system designer to abstract
+the idea of hardware and allow their code to run correctly regardless
+of the execution environment. For the user, this is nice because virtual
+machines are isolated and protected from one another, and because changing
+the current operating system is far more simple than if the machine was
+running natively.
 
-2.24) Just-in-time compilation allows a method to be compiled into native machine code and cached so they don't need to be interpreted multiple times. This allows for very fast execution times.
+2.24) Just-in-time compilation allows a method to be compiled into native
+machine code and cached so they don't need to be interpreted multiple
+times. This allows for very fast execution times.
 
-2.25) In VMware, a virtualization layer is used to mimic the hardware for each virtual machine. Because of this, each VM has its own virtual CPU, memory, disk drives, and network interfaces. In order for this to function correctly, the architecture of the host machine must be the same as the guest machine (unless the architecture itself can be emulated). In the case of VMware, the Intel X86 architecture and compatible hardware must be used. 
+2.25) In VMware, a virtualization layer is used to mimic the hardware for
+each virtual machine. Because of this, each VM has its own virtual CPU,
+memory, disk drives, and network interfaces. In order for this to function
+correctly, the architecture of the host machine must be the same as the
+guest machine (unless the architecture itself can be emulated). In the
+case of VMware, the Intel X86 architecture and compatible hardware must
+be used.
