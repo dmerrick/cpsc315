@@ -1,0 +1,16 @@
+user Dana Merrick
+size 400
+nprocs 5
+rundelay 100
+infosize 5
+parent-child false
+showFD true
+nopreempt
+FCFS
+fork parent
+showFD2 false
+prompt >>>
+program RingOfProcesses
+program FanOfProcesses
+program ChainOfProcesses
+program TreeOfProcesses
