@@ -1,0 +1,39 @@
+Homework 2
+Dana Merrick - CPSC315
+Operating System Concepts - 8th Ed.
+
+=== Chapter Three ===
+3.9) Eight processes are created in total.
+
+3.10) Values of pid (and NOT pid1):
+A: 0
+B: 0
+C: 2600 
+D: 2600
+
+3.11) A named pipe would be useful for connecting to a running daemon,
+such as a database. Since the pipe will likely be used again, giving it
+a name would be beneficial.
+
+Ordinary pipes would be more useful when working with the shell, since
+processes tend to be one-off and short lived.
+
+3.13) The output will be "PARENT: value = 5", since the value is modified
+in the child process, and that change is not carried over into the
+parent process.
+
+3.14a) Synchronous communication allows for lowered overhead at the cost
+of increased complexity, while asynchronous communication is inexpensive,
+simple, and easier to implement.
+
+3.14b) Automatic buffering makes programming easy, but is more complicated
+to implement from the system programmers standpoint. Explicit buffering
+offers better control.
+
+3.14c) Send by copy works well in situations where processes do not
+share the same main memory. Send by reference allows the data to be
+modified locally.
+
+3.14d) Like automatic buffering, variable sized messages are easier on
+the programmer but more complicated to implement.
+
