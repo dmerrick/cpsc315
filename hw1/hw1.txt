@@ -1,6 +1,9 @@
-Homework 1 Dana Merrick - CPSC315 Operating System Concepts - 8th Ed.
+Homework 1
+Dana Merrick - CPSC315
+Operating System Concepts - 8th Ed.
 
-=== Chapter One === 1.18) Clustered systems are composed of two or more
+=== Chapter One ===
+1.18) Clustered systems are composed of two or more
 separate machines, while multiprocessor systems have multiple processors
 on a single machine. In order for two computers to cooperate to provide
 a high availability service, the machines must be both synchronized
@@ -31,7 +34,8 @@ location in memory. If one of the processes has begun manipulating the
 data, say, incrementing the value of the data in memory by one, and the
 other has not, the caches will differ.
 
-=== Chapter Two === 2.16) Sharing the same system call interface is
+=== Chapter Two ===
+2.16) Sharing the same system call interface is
 advantageous because it encourages the use of kernel mode, it allows
 for a standard API to be used across an entire operating system, and it
 simplifies the number of libraries to require when building code. It also
@@ -63,3 +67,4 @@ correctly, the architecture of the host machine must be the same as the
 guest machine (unless the architecture itself can be emulated). In the
 case of VMware, the Intel X86 architecture and compatible hardware must
 be used.
+
