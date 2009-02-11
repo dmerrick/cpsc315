@@ -21,7 +21,7 @@ int main(void)
 	unsigned int server_sockfd, client_sockfd, client_len;
 	struct sockaddr_in client_address, server_address;
 	int len, i;
-  char cmd[4]; // this string will hold the command issued
+  char cmd[5]; // this string will hold the command issued
 
 
 	if ((server_sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -62,6 +62,8 @@ int main(void)
       // I used this instead of strncmp() so we could separate the arguements
 			cmd[i] = toupper(buf[i]);
     }
+    cmd[4] = '\0';
+
 		for (i = 4; i < len; ++i) {
       // save the rest as the command arguements
 			buf[i] = toupper(buf[i]);
