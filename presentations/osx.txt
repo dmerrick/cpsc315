@@ -1,0 +1,54 @@
+in traditional BSD systems the kernel is divided into upper and lower sections. The upper half is executed by the user thread that made the system call. It can sleep while waiting for I/O to complete or for access to shared kernel resources.
+The lower half is executed as the result of hardware interrupts. Interrupts cannot sleep. The upper half synchronizes with the lower half by disabling interrupts.
+
+Even though OS X uses a large part of the BSD kernel code, it is not a traditional BSD system. since it uses the mach kernel instead, the the kernel synchronization system had to be reworked. for instance, mach supports multiprocessor systems, so you cant just disable interrupts as a synchronization guarantee.
+
+while the upper half of the mach kernel still works under the context of the user thread that made the call, the lower half isn't executed in the context of a hardware interrupt. Hardware interrupts wake up something called an IOKit workloop thread, which is a kernel thread -- owned by the kernel and not any process. The workloop thread then executes the lower half of the bsd kernel.
+
+Since the upper and lower halves of the kernel could be running different threads on different processors, OS X implements something called a "kernel funnel," which is a mutex that prevents more than one thread from running inside the BSD portions of the mach kernel simultaneously. When a thread enters the bsd portion of the kernel, it aquires the funnel and drops it when it leaves or when it sleeps.
+
+Five types of threading APIs:
+Mach threads represent the lowest level threading on the system. Userspace processes generally do not create Mach threads directly.
+
+POSIX threads (pthreads) are the C-based interface for creating threads. They are the go-to solution for creating threads if you're not working in Cocoa. The POSIX interface is relatively simple and offers lots of flexibility for configuring threads.
+
+Cocoa threads (NSThreads) are the thread implementation in OSX's main API. They are layered on top of pthreads. NSThreads are generally the go-to choice when coding for OS X. Sometimes it's a better idea to use pthreads, like if you're writing a wrapper program for an app that already uses POSIX threads.
+
+Carbon Multiprocessing Services is a legacy C-based interface used for transitioning apps from older versions of MacOS. They are also layered on top of pthreads. These are the normal choice for writing applications in Carbon, but some Carbon calls are not available. You can also use pthreads, but then your app wont be backwards compatible with OS 9.
+
+Carbon Thread Manager cooperative threads are another API for transitioning from OS 9, which are also layered on top of pthreads. If you need to use cooperative threads you can use this API, but it is widely accepted that it is very difficult to integrate cooperative threads into a well-behaved OS X application. 
+
+
+show picture?
+mach threads(pthreads(NSThreads TSThreads(MP tasks Cooperative)))
+
+Most high-level thread APIs create detached threads by default. Detached threads are preferred because they allow the system to free up the thread's data structures immediately upon completion of the thread. Detached threads also do not require explicit interactions with the parent program.
+
+At application exit time, detached threads can be terminated immediately but joinable threads cannot. Each joinable thread must be joined before the process is allowed to exit. Joinable threads may therefore be preferable in cases where the thread is doing critical work that should not be interrupted, such as saving data to disk.
+
+It is also acceptable to use multiple types of threads in a single program.
+
+All threads have roughly equal cost on OS X.
+
+Each thread in OS X requires the allocation of memory in both the kernel memory space and the programs memory space. The core structures which manage the thread and coordinate its scheduling are stored in the kernel, while the threads stack space and per-thread data is in the programs memory space.
+
+thread specific data
+Each thread maintains a dictionary of key-value pairs that can be accessed from anywhere in the thread. You can use this dictionary to store information that you want to persist throughout the execution of your thread. For example, you could use it to store state information that you want to persist through multiple iterations of your thread's run loop.
+
+Since all of the different types of threads are represented by Mach threads, as far as Mach is concerned everything is equal. This means it relies on the thread scheduler to manage what the next thread to execute is. Each thread has it's own "policy," which can be one of these three things:
+
+# the standard policy (THREAD_STANDARD_POLICY), under which threads are scheduled by a system-defined fair algorithm
+
+# the time constraint policy (THREAD_TIME_CONSTRAINT_POLICY), under which threads are scheduled according to real-time constraints, and
+
+# the precedence policy (THREAD_PRECEDENCE_POLICY), which allows a task to specify the importance of a thread relative to the task's other threads.
+
+
+
+fork and exec
+
+signal handling
+thread pools
+
+scheduler activations
+
