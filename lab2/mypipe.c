@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   while ( loops > 0 ) {
 	  switch ( fork() ) {
 	    case -1:
-		    perror("Fork");
+		    perror("Fork error.");
 		    exit(2);
 	    case 0:
 		    dup2(fd[1], STDOUT_FILENO);

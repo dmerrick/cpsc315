@@ -1,0 +1,71 @@
+<HEAD>
+<TITLE>Process Ring Simulator Log for Dana Merrick generated Mon Feb 09 11:10:31 EST 2009</TITLE>
+</HEAD>
+<BODY BGCOLOR=#FFFFFF><H3>Process Ring Simulator Log for Dana Merrick generated Mon Feb 09 11:10:31 EST 2009</H3>
+
+<H6>Process Ring Simulation by S. Robbins version 1.03 supported by NSF DUE-9752165, last modified January 2, 2007 using Jeli L288 last modified March 1, 2007<br>
+See <a href=http://vip.cs.utsa.edu/nsf>http://vip.cs.utsa.edu/nsf</a> for simulator information.<br><br>
+Java version 1.6.0_07 OS Linux version 2.6.24-21-generic 16654197260
+<br></H6>
+
+<hr>
+
+<font color="#000000">pipe(fd);</font><br>
+<font color="#000000">dup2(fd[0],0);</font><br>
+<font color="#000000">dup2(fd[1],1);</font><br>
+<font color="#000000">close(fd[0]);</font><br>
+<font color="#000000">close(fd[1]);</font><br>
+<font color="#000000">for(i=1;i&lt;nprocs;i++)&nbsp;{</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;pipe(fd);</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;if&nbsp;(childpid&nbsp;=&nbsp;fork())&nbsp;{</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dup2(fd[1],1);</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;}</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;else&nbsp;{</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dup2(fd[0],0);</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;}</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;close(fd[0]);</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;close(fd[1]);</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;if&nbsp;(childpid)</font><br>
+<font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;</font><br>
+<font color="#000000">}</font><br>
+<font color="#000000">fprintf(stderr,"This&nbsp;is&nbsp;process&nbsp;%d&nbsp;with&nbsp;parent&nbsp;%d\n",getpid(),getppid());</font><br>
+<font color="#000000">--&gt;</font><br>
+
+Mon Feb 09 11:10:35 EST 2009<br>
+<br>
+<center>
+<IMG SRC=gifimage01.gif><br>
+Ring of Processes Simulation<br></center>
+
+Mon Feb 09 11:11:14 EST 2009<br>
+<br>
+<center>
+<IMG SRC=gifimage02.gif><br>
+Gantt Chart<br></center>
+
+<p><hr><b>Output for Ring of Processes</b><br>
+After fork: parent, Choose Process: FCFS, Scheduling: no preempt, Print Not Atomic 0.2<br>
+<font color="#FF0000">This&nbsp;is&nbsp;process&nbsp;100&nbsp;with&nbsp;parent&nbsp;1</font><br>
+<font color="#FF0000">&gt;&gt;&gt;</font><font color="#00FF00">This&nbsp;is&nbsp;process&nbsp;101&nbsp;with&nbsp;parent&nbsp;1</font><br>
+<font color="#0000FF">This&nbsp;is&nbsp;process&nbsp;102&nbsp;with&nbsp;parent&nbsp;1</font><br>
+<font color="#00FFFF">This&nbsp;is&nbsp;process&nbsp;103&nbsp;with&nbsp;parent&nbsp;1</font><br>
+<font color="#FF00FF">This&nbsp;is&nbsp;process&nbsp;104&nbsp;with&nbsp;parent&nbsp;1</font><br>
+
+Mon Feb 09 11:14:17 EST 2009<br>
+<br>
+<center>
+<IMG SRC=gifimage03.gif><br>
+Ring of Processes Simulation<br></center>
+
+<p><hr><b>Output for Ring of Processes</b><br>
+After fork: parent, Choose Process: FCFS, Scheduling: no preempt, Print Not Atomic 0.2<br>
+<font color="#FF0000">This&nbsp;is&nbsp;proc</font><font color="#00FF00">This&nbsp;i</font><font color="#FF0000">ess&nbsp;100&nbsp;with</font><font color="#0000FF">Th</font><font color="#00FF00">s&nbsp;</font><font color="#FF0000">&nbsp;parent&nbsp;1</font><font color="#00FFFF">This&nbsp;is&nbsp;pr</font><font color="#0000FF">is&nbsp;i</font><font color="#00FF00">proces</font><font color="#FF0000"></font><br>
+<font color="#FF0000">&gt;&gt;&gt;</font><font color="#FF00FF">This</font><font color="#00FFFF">oc</font><font color="#0000FF">s&nbsp;p</font><font color="#00FF00">s</font><font color="#FF6666">Thi</font><font color="#FF00FF">&nbsp;is</font><font color="#00FFFF">ess&nbsp;1</font><font color="#0000FF">rocess</font><font color="#00FF00">&nbsp;</font><font color="#66FF66">This&nbsp;</font><font color="#FF6666">s&nbsp;is&nbsp;pro</font><font color="#FF00FF">&nbsp;process&nbsp;104&nbsp;w</font><font color="#00FFFF">03&nbsp;w</font><font color="#0000FF">&nbsp;</font><font color="#00FF00">101&nbsp;with&nbsp;p</font><font color="#6666FF">Thi</font><font color="#66FF66">is&nbsp;</font><font color="#FF6666">ce</font><font color="#FF00FF">i</font><font color="#00FFFF">ith&nbsp;</font><font color="#0000FF">102&nbsp;with</font><font color="#00FF00">ar</font><font color="#66FFFF">This&nbsp;</font><font color="#6666FF">s&nbsp;is&nbsp;process&nbsp;1</font><font color="#66FF66">process&nbsp;106&nbsp;wit</font><font color="#FF6666">ss&nbsp;</font><font color="#FF00FF">t</font><font color="#00FFFF">p</font><font color="#0000FF">&nbsp;parent&nbsp;101</font><font color="#00FF00">e</font><font color="#FF66FF">This&nbsp;is&nbsp;pro</font><font color="#66FFFF">i</font><font color="#6666FF">07&nbsp;</font><font color="#66FF66">h&nbsp;pa</font><font color="#FF6666">105&nbsp;</font><font color="#FF00FF">h&nbsp;</font><font color="#00FFFF">arent&nbsp;102</font><br>
+<font color="#00FF00">n</font><font color="#FF66FF">cess&nbsp;</font><font color="#66FFFF">s&nbsp;p</font><font color="#6666FF">w</font><font color="#66FF66">rent&nbsp;105</font><br>
+<font color="#FF6666">w</font><font color="#FF00FF">parent&nbsp;103</font><br>
+<font color="#00FF00">t&nbsp;</font><font color="#FF66FF">109&nbsp;w</font><font color="#66FFFF">rocess</font><font color="#6666FF">ith&nbsp;paren</font><font color="#FF6666">it</font><font color="#00FF00">100</font><br>
+<font color="#FF66FF">ith&nbsp;par</font><font color="#66FFFF">&nbsp;108&nbsp;</font><font color="#6666FF">t&nbsp;106</font><font color="#FF6666">h</font><font color="#FF66FF">ent</font><font color="#66FFFF">w</font><font color="#6666FF"></font><br>
+<font color="#FF6666">&nbsp;pa</font><font color="#FF66FF">&nbsp;108</font><br>
+<font color="#66FFFF">ith&nbsp;</font><font color="#FF6666">re</font><font color="#66FFFF">par</font><font color="#FF6666">nt&nbsp;104</font><br>
+<font color="#66FFFF">en</font><font color="#66FFFF">t&nbsp;107</font><br>
+
