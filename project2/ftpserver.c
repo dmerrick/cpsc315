@@ -96,6 +96,7 @@ int main(void)
 
 	    while ((file_len=read(client_sockfd, file_buf, BUFSIZ)) > 0) {
         file_buf[5]='\0';
+        printf("%s\n",file_buf);
 		    write(local, file_buf, file_len);
       }
       break;
