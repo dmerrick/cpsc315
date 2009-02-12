@@ -138,8 +138,14 @@ int receiveFile(char file, unsigned int socket_fd) {
   char file_buf[BUFSIZ];
   int file_len;
   int local; // the local file
+  char file_name,dir_name;
 
   puts("Command was PUT!"); 
+
+  // create new directory
+  mode_t process_mask = umask(0);
+  int result_code = mkdir(dir_name, S_IRWXU | S_IRWXG | S_IRWXO)
+  umask(process_mask);
   
   local = open(file, O_WRONLY | O_CREAT | O_TRUNC, 00644);
 
