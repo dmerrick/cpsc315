@@ -4,31 +4,40 @@
  *  @author Dana Merrick
  */
 
+#include <ctype.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 #include <stdlib.h>
+#include <netdb.h>
 #include <unistd.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 
+// size of "put" and "get" plus nul
+#define CMDSIZE 4
+
+// function signatures
 int receiveFile(char file, unsigned int socket_fd);
 int sendFile(char file, unsigned int socket_fd);
 
+/**
+ * Main method.
+ */
 int main(void)
 {
 	char buf[BUFSIZ];
 	unsigned int server_sockfd, client_sockfd, client_len;
 	struct sockaddr_in client_address, server_address;
 	int len, i;
-  char cmd[4]; // this string will hold the command issued
+  // my variables
+  char cmd[CMDSIZE]; // this string will hold the command issued
   char file_arg[BUFSIZ]; // the arguement passed from the client
 
+  // setting up socket...
 
   // open socket or die trying
 	if ((server_sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -36,7 +45,7 @@ int main(void)
 		exit(1);
 	}
 
-  // set up socket
+  // socket details
 	memset(&server_address, 0, sizeof(server_address));
 	server_address.sin_family = AF_INET;
 	server_address.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -65,34 +74,41 @@ int main(void)
 		exit(4);
 	}
 
+  // socket set up, let's start working with it
+
 	while ((len=read(client_sockfd, buf, BUFSIZ)) > 0) {
 
-		for (i = 0; i < 3; ++i) {
+    // split the buffer into two parts
+		for (i = 0; i < CMDSIZE-1; ++i) {
       // save the first for chars as a the command
       // I used this instead of strncmp() so we could separate the arguements
 			cmd[i] = toupper(buf[i]);
     }
-    cmd[3] = '\0';
+    // close off cmd with nul char
+    cmd[CMDSIZE-1] = '\0';
 
-		for (i = 4; i < len; ++i) {
+		for (i = CMDSIZE; i < len; ++i) {
       // save the rest as the command arguement
-      file_arg[i-4]=buf[i];
-			//buf[i] = toupper(buf[i]);
+      file_arg[i-CMDSIZE]=buf[i];
     }
 
-    // write the buffer back to the client
-		//write(client_sockfd, buf, len);
+    // send the command back to the client
+		write(client_sockfd, cmd, CMDSIZE);
 
-    printf("DEBUG: file_arg=%s",file_arg);
-    //printf("DEBUG: cmd=%s<<<\n",cmd);
+    // debugging messages
+    //printf("DEBUG: file_arg=%s",file_arg);
+    //printf("DEBUG: cmd=%s\n",cmd);
 
+    // start parsing the command
     if (strcmp(cmd,"PUT") == 0) { 
 
+      // try and receive the file
       if( receiveFile(file_arg, client_sockfd) )
         break;
 
     } else if (strcmp(cmd,"GET") == 0) { 
       
+      // try and send the file
       if(sendFile(file_arg, client_sockfd))
         break;
     
@@ -104,6 +120,7 @@ int main(void)
     } else {
     
       printf("unrecognised command: %s",cmd);
+      // return to the loop
 
     }
 
@@ -116,50 +133,73 @@ int main(void)
   return 0;
 }
 
+/**
+ * Sends a file to the client via a given socket.
+ *
+ * @param filename string
+ * @param client socket file descriptor
+ * @return status
+ */
 int sendFile(char file, unsigned int socket_fd) {
-  char file_buf[BUFSIZ];
-  int file_len;
+  char file_buf[BUFSIZ]; // buffer for data to send
+  int file_len; // filesize
   int local; // the local file
 
+  // debug message
   puts("Command was GET!"); 
 
+  // open file for reading
   local = open(file, O_RDONLY);
 
+  // verify file was opened correctly
   if (!local) {
     fprintf(stderr, "ERROR: local file could not be opened: %s\n", file);
   }
 
+  // close the file
   close(local);
 
+  // exit cleanly
   return 0;
 }
 
+/**
+ * Sends a file over a given socket.
+ *
+ * @param filename string
+ * @param client socket file descriptor
+ * @return status
+ */
 int receiveFile(char file, unsigned int socket_fd) {
-  char file_buf[BUFSIZ];
-  int file_len;
-  int local; // the local file
-  char file_name,dir_name;
+  char file_buf[BUFSIZ]; // buffer for data to send
+  int file_len; // filesize
+  int local; // the local file descriptor
+  char file_name; // local filename
+  // should be "from_client_<filename>"
 
+  // debug message
   puts("Command was PUT!"); 
 
-  // create new directory
-  mode_t process_mask = umask(0);
-  int result_code = mkdir(dir_name, S_IRWXU | S_IRWXG | S_IRWXO)
-  umask(process_mask);
-  
+  // open file or create it
   local = open(file, O_WRONLY | O_CREAT | O_TRUNC, 00644);
 
+  // very we opened it correctly
   if (!local) {
     fprintf(stderr, "ERROR: local file could not be opened: %s\n", file);
   }
 
+  // read the file data from the client
 	if ((file_len=read(socket_fd, file_buf, BUFSIZ)) > 0) {
+    // write it to the terminal...
 	  write(STDOUT_FILENO, file_buf, file_len);
+    // ...and to the local file
 	  write(local, file_buf, file_len);
   }
 
+  // close the file
   close(local);
 
+  // exit cleanly
   return 0;
 }
 
