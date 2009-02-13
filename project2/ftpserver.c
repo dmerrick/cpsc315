@@ -82,13 +82,13 @@ int main(void)
 		for (i = 0; i < CMDSIZE-1; ++i) {
       // save the first for chars as a the command
       // I used this instead of strncmp() so we could separate the arguements
-			cmd[i] = toupper(buf[i]);
+			cmd[i] = toupper(buf[i]); // caps for easy parsing
     }
     // close off cmd with nul char
     cmd[CMDSIZE-1] = '\0';
 
 		for (i = CMDSIZE; i < len; ++i) {
-      // save the rest as the command arguement
+      // save the rest as the filename
       file_arg[i-CMDSIZE]=buf[i];
     }
 
@@ -154,6 +154,15 @@ int sendFile(char file, unsigned int socket_fd) {
   // verify file was opened correctly
   if (!local) {
     fprintf(stderr, "ERROR: local file could not be opened: %s\n", file);
+  }
+
+  // send the data
+  while ((file_len=read(socket_fd, file_buf, BUFSIZ)) > 0) {
+    // write to the socket
+    if (write(socket_fd,file_buf,file_len) < file_len) {
+      fprintf(stderr, "ERROR: error writing to socket");
+      return 2;
+    }
   }
 
   // close the file
