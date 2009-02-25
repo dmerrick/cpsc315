@@ -1,0 +1,69 @@
+Homework 3
+
+Dana Merrick - CPSC315
+
+Operating System Concepts - 8th Ed.
+
+=== Chapter Four ===
+4.7) Any problem where there is a simple algorithm that cannot be separated into multiple sections would not benefit from a multicore system. For instance, multiplying large numbers or determining the length of a string.
+
+4.13) Line C would print "CHILD: value = 5", because it forked into a new process and executed the runner function (in a thread), which modified the value of value.
+
+Line P would print "PARENT: value = 0", since nothing modified the value variable in the parent process.
+
+4.14a) When the number of kernel threads is less than the number of processors, each thread can get its own processor and execution times will benefit.
+
+4.14b) When the number of threads is equal to the number of processors, the execution will benefit as long as the process is not competing with other processes for control over a processor.
+
+4.14c) When the kernel threads outnumber the processors but are less than the number of user level threads, then the execution will be hindered as each thread still needs to be mapped to a processor and will not be able to be executed all simultaniously.
+
+=== Chapter Five ===
+5.11a) If a=0, then the formula will ignore the recent history of T0=100ms.
+
+5.11b) If a=0.99, it is on the other end of the spectrum, so only the most recent CPU burst matters, and it T1 will be very close to T0=10ms.
+
+5.12a)
+FCFS:
+
+SJF:
+
+non-preemptive:
+
+RR1:
+
+5.12b)
+FCFS:
+P1 =
+P2 =
+P3 =
+P4 =
+P5 =
+
+SJF:
+P1 =
+P2 =
+P3 =
+P4 =
+P5 =
+
+non-preemptive:
+P1 =
+P2 =
+P3 =
+P4 =
+P5 =
+
+RR1:
+P1 =
+P2 =
+P3 =
+P4 =
+P5 =
+
+5.15a) The first I/O task starts, and executes for 1ms (1/10th of it's full time). Then, after 0.1ms of overhead, either a different I/O task or the CPU-based task will be executed for 1ms. This will be repeated until each task has been executed once, and then the whole process will be repeated until all of the I/O bound tasks are finished and only the CPU bound task remains.
+
+5.15b) The first I/O bound task starts, and is allowed to execute fully since the time quantum is equal to the completion time. Then the CPU bound task would get 10ms of CPU time after 0.1ms of overhead. Then each of the other 9 I/O bound tasks would execute, one after another, until finally the CPU bound task would be all that was left.
+
+5.17a) When the rate at which a priority changes in execution is bigger than in the ready queue and greater than zero, the algorithm is SJF.
+
+5.17b) When the rate at which a priority changes in the ready queue is less than when in execution and less than zero, the algorithm is FCFS.
