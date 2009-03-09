@@ -1,0 +1,26 @@
+Programming Project 3
+
+Dana Merrick
+CPSC315 3/9/9
+
+1) How To Compile and Run
+Once you extract the tarball, all you need to do is run:
+
+make all
+
+This will build all of the needed binaries.
+
+MAKE TEST?
+
+2) Requested Input From Professor Yoon
+
+
+3) Output to Expect
+
+
+4) Anything Else
+
+There are a number of make tasks you can use, such as clean, and package.
+
+I used git for SCM during this project. The git repo can be found here:
+http://github.com/dmerrick/cpsc315/tree/master
