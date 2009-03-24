@@ -18,9 +18,6 @@
 int bankers();
 void printResources();
 int init( char *filename );
-void requestResource( int process );
-int allocate( int proc, int res[3] );
-int checkCompletion( int proc );
 
 // these values will be read from the configuration file
 int resources, processes;
@@ -172,40 +169,6 @@ void printResources() {
  */
 int init( char *filename ) {
 
-  // Step One: Initialize the variables.
-
-  // set up Allocation (2D array)
-	if( !(Allocation = malloc( processes * sizeof( int* ) )))
-		return 1;
-	for( i=0; i<processes; i++ )
-		if(!(Allocation[i] = malloc( resources * sizeof( int ) )))
-		return 2;
-
-	// set up Max (2D array)
-	if( !(Max = malloc( processes * sizeof( int* ) )))
-		return 3;
-	for( i=0; i<processes; i++ )
-		if( !(Max[i] = malloc( resources * sizeof( int ) )))
-		return 4;
-
-	// set up Running array
-	if( !(Running = malloc( processes * sizeof( int ) )))
-		return 5;
-
-	// set up maxres array
-	if( !(maxres = malloc( resources * sizeof( int ) )))
-		return 6;
-
-	// set up Available array
-	if( !(Available = malloc( resources * sizeof( int ) )))
-		return 7;
-
-	// set up Available_tmp array
-	if( !(Available_tmp = malloc( resources * sizeof( int ) )))
-		return 8;
-
-  // Step Two: Set the variables.
-
   // open the config file
 	FILE *file;
 	if( !(file = fopen(filename,"r"))) {
@@ -220,6 +183,10 @@ int init( char *filename ) {
 	fgets(buffer, MAX, file);
 	resources = atoi(buffer);
 	
+  // now we can set up the maxres array
+	if( !(maxres = malloc( resources * sizeof( int ) )))
+		return 6;
+
 	// parse second line: number of instances of each resource type
 	fgets(buffer, MAX, file);
 	i=0;
@@ -235,6 +202,14 @@ int init( char *filename ) {
 	fgets(buffer, MAX, file);
 	processes = atoi(buffer);
 	
+	// now that we have both processes and resources
+  // we can set up the Max array (2D)
+	if( !(Max = malloc( processes * sizeof( int* ) )))
+		return 3;
+	for( i=0; i<processes; i++ )
+		if( !(Max[i] = malloc( resources * sizeof( int ) )))
+		return 4;
+
 	// parse rest of lines: max requests by each process
 	i=0;
 	while(fgets(buffer, MAX, file) != NULL) {
@@ -249,109 +224,29 @@ int init( char *filename ) {
 		i++;
 	}
 
+  // now we can finish creating the other arrays
+
+  // set up Allocation array (2D)
+	if( !(Allocation = malloc( processes * sizeof( int* ) )))
+		return 1;
+	for( i=0; i<processes; i++ )
+		if(!(Allocation[i] = malloc( resources * sizeof( int ) )))
+		return 2;
+
+	// set up Running array
+	if( !(Running = malloc( processes * sizeof( int ) )))
+		return 5;
+
+	// set up Available array
+	if( !(Available = malloc( resources * sizeof( int ) )))
+		return 7;
+
+	// set up Available_tmp array
+	if( !(Available_tmp = malloc( resources * sizeof( int ) )))
+		return 8;
+
 	// close the file and exit cleanly
 	fclose(file);
 	return 0;
 }
 
-/**
- * Original comment:
- * this routine mimics an OS resource request which basiclly checks if a
- * resource is busy, if not gives it to your process, and then marks it 
- * busy. If it is busy to begin with some strategy is used to deny the 
- * request. Here, he deadlocks if the request cannot be done -- I think 
- * that means that the processes cannot complete because of lack of 
- * resources, no matter what you do (Besides runnign them one at a time). 
- *
- * @param process number
- */
-void requestResource( int process ) {
-//check if it is allocated, will it go to deadlock 
-	int res[3]; 
-
-	//process--; 
-	
-	if( Running[process] == TRUE ) 
-	{ 
-		printf("\nCurrently this process needs the following resources:\n"); 
-		for( i=0; i<resources; i++ ) 
-			printf("R%d\t",i+1);
-		printf("\n");
-		for( i=0; i<resources; i++) 
-			printf("%d\t",Max[process][i]-Allocation[process][i]); 
-		for(i=0; i<resources; i++) 
-		{ 
-			loop_3: 
-			printf("\nEnter number of resource %d to allocate to process %d:\n",i+1,process+1); 
-			scanf("%d",&res[i]); 
-			if((res[i]>(Max[process][i]-Allocation[process][i]))||(res[i]>Available[i])) 
-			{ 
-				printf("\nInvalid value!, try again!"); 
-				goto loop_3; 
-			} 
-		} 
-		
-		getchar(); 
-		
-		// alocate the resource to the process
-		if( allocate(process,res) == TRUE ) { 
-			printf("\nResources successfully allocated.\n");
-			
-			if( checkCompletion(process) == TRUE ) 
-				printf("\nProcess %d has completed its execution and its resources have been released.\n",process+1); 
-		} else {
-			printf("\nResources cannot be allocated as it may lead to deadlock.\n");
-		}
-		
-	} 
-	else 
-	{ 
-		printf("\nInvalid process number.\n"); 
-		getchar(); 
-	} 
-} 
-
-/**
- * Allocate a resource to a process, used in the above routine.
- * This is just management code to mark the appropriate stuff when an
- * allocation is allowed. 
- *
- * @param process number
- * @param resources
- * @return true if successfully allocated
- */
-int allocate(int proc, int res[3]) {
-	 
-	for(i=0; i<resources; i++) { 
-		Allocation[proc][i] += res[i]; 
-		Available[i] -= res[i]; 
-	} 
-	
-	if( bankers() == FALSE) {
-		for(i=0; i<resources; i++) { 
-			Allocation[proc][i] -= res[i]; 
-			Available[i] += res[i]; 
-		} 
-		return FALSE; 
-	} 
-	return TRUE; 
-} 
-
-/**
- * Checks if a given process has completed.
- *
- * @param process number
- * @return true if the process is complete
- */
-int checkCompletion(int proc) { 
-	if((Allocation[proc][0]==Max[proc][0])&&(Allocation[proc][1]==Max[proc][1])&&(Allocation[proc][2]==Max[proc][2])) { 
-		for(i=0; i<resources; i++ ) { 
-			Available[i] += Max[proc][i]; 
-		}
-		// process is complete!
-		Running[proc] = FALSE; 
-		return TRUE; 
-	}
-	// not quite finished, so return false
-	return FALSE; 
-}
