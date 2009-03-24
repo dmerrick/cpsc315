@@ -69,10 +69,13 @@ int main(int argc, char *argv[]) {
 		
 		// spawn threads and request resourses here.
 
+    // temporary loop kill
+		count = 0;
+
 	} while( count != 0 );
 
 	// out of the while loop, so all of the processes are finished
-	printf("All processes finished without deadlock."); 
+	printf("All processes finished without deadlock.\n"); 
 	return 0;
 }
 
@@ -162,24 +165,23 @@ void printResources() {
 }
 
 /**
- * Reads a configuration file and sets the variables as needed.
+ * Reads a configuration file and sets the global variables as needed.
  *
- * @param configuration filename
+ * @param configuration file filename
+ * @return status
  */
 int init( char *filename ) {
-	
-	// temporarally hardwiring in these values:
-	resources = 3;
-	processes = 3;
 
-  // set up Allocation 2D array
+  // Step One: Initialize the variables.
+
+  // set up Allocation (2D array)
 	if( !(Allocation = malloc( processes * sizeof( int* ) )))
 		return 1;
 	for( i=0; i<processes; i++ )
 		if(!(Allocation[i] = malloc( resources * sizeof( int ) )))
 		return 2;
 
-	// set up Max 2D array
+	// set up Max (2D array)
 	if( !(Max = malloc( processes * sizeof( int* ) )))
 		return 3;
 	for( i=0; i<processes; i++ )
@@ -202,6 +204,8 @@ int init( char *filename ) {
 	if( !(Available_tmp = malloc( resources * sizeof( int ) )))
 		return 8;
 
+  // Step Two: Set the variables.
+
   // open the config file
 	FILE *file;
 	if( !(file = fopen(filename,"r"))) {
@@ -209,7 +213,8 @@ int init( char *filename ) {
 		return 9;
 	}
 	
-	char buffer[MAX];
+	char buffer[MAX]; // the line read from the file
+	char *tmp;        // each value on a line as a string
 	
 	// parse the first line: number of resource types
 	fgets(buffer, MAX, file);
@@ -217,41 +222,46 @@ int init( char *filename ) {
 	
 	// parse second line: number of instances of each resource type
 	fgets(buffer, MAX, file);
-	// split the line
-	
+	i=0;
+	// we'll use a tokenizer to split the string on spaces
+	tmp = strtok(buffer," ");
+	while( tmp != NULL) {
+		maxres[i] = atoi(tmp);
+		tmp = strtok(NULL, " ");
+		i++;
+	}
+		  
 	// parse third line: number of processes
 	fgets(buffer, MAX, file);
 	processes = atoi(buffer);
 	
 	// parse rest of lines: max requests by each process
-	while(fgets(buffer, MAX, file) != EOF) {
-		//split the line
+	i=0;
+	while(fgets(buffer, MAX, file) != NULL) {
+		j=0;
+		// we'll use a tokenizer to split the string on spaces
+		tmp = strtok(buffer," ");
+		while( tmp != NULL) {
+			Max[i][j] = atoi(tmp);
+			tmp = strtok(NULL, " ");
+			j++;
+		}
+		i++;
 	}
-	
-	
-	printf("%d, %d", processes, resources);
-	
-  // hardwired values
-	maxres[0]=6; maxres[1]=4; maxres[2]=7;
-	Available[0]=6; Available[1]=4; Available[2]=7;
-	Available_tmp[0]=6; Available_tmp[1]=4; Available_tmp[2]=7;
-	
-	Max[0][0]=3; Allocation[0][0]=1; Available[0]=3; 
-	Max[0][1]=3; Allocation[0][1]=2; Available[1]=1; 
-	Max[0][2]=2; Allocation[0][2]=2; Available[2]=1; 
-	Max[1][0]=1; Allocation[1][0]=1; 
-	Max[1][1]=2; Allocation[1][1]=0; 
-	Max[1][2]=3; Allocation[1][2]=3; 
-	Max[2][0]=1; Allocation[2][0]=1; 
-	Max[2][1]=1; Allocation[2][1]=1; 
-	Max[2][2]=5; Allocation[2][2]=1; 
-	
+
+	// close the file and exit cleanly
 	fclose(file);
 	return 0;
 }
 
 /**
- * this routine mimics an OS resource request which basiclly checks if a resource is busy, if not gives it to your process, and then marks it busy. If it is busy to begin with some strategy is used to deny the request. Here, he deadlocks if the request cannot be done -- I think that means that the processes cannot complete because of lack of resources, no matter what you do (Besides runnign them one at a time). 
+ * Original comment:
+ * this routine mimics an OS resource request which basiclly checks if a
+ * resource is busy, if not gives it to your process, and then marks it 
+ * busy. If it is busy to begin with some strategy is used to deny the 
+ * request. Here, he deadlocks if the request cannot be done -- I think 
+ * that means that the processes cannot complete because of lack of 
+ * resources, no matter what you do (Besides runnign them one at a time). 
  *
  * @param process number
  */
@@ -301,8 +311,15 @@ void requestResource( int process ) {
 	} 
 } 
 
-// Allocate a resource to a process, used in the above routine.
-// This is just management code to mark the appropriate stuff when an allocation is allowed. 
+/**
+ * Allocate a resource to a process, used in the above routine.
+ * This is just management code to mark the appropriate stuff when an
+ * allocation is allowed. 
+ *
+ * @param process number
+ * @param resources
+ * @return true if successfully allocated
+ */
 int allocate(int proc, int res[3]) {
 	 
 	for(i=0; i<resources; i++) { 
@@ -320,6 +337,12 @@ int allocate(int proc, int res[3]) {
 	return TRUE; 
 } 
 
+/**
+ * Checks if a given process has completed.
+ *
+ * @param process number
+ * @return true if the process is complete
+ */
 int checkCompletion(int proc) { 
 	if((Allocation[proc][0]==Max[proc][0])&&(Allocation[proc][1]==Max[proc][1])&&(Allocation[proc][2]==Max[proc][2])) { 
 		for(i=0; i<resources; i++ ) { 
