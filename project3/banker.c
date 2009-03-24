@@ -7,10 +7,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // constants
 #define TRUE 1
 #define FALSE 0
+#define MAX 80
 
 // method signatures
 int bankers();
@@ -57,7 +59,7 @@ int main(int argc, char *argv[]) {
 	do { 
 
 		// check the number of running processes
-		for(i=0; i<processes; i++) { 
+		for( i=0; i<processes; i++ ) { 
 			if( Running[i] == TRUE ) 
 				count++; 
 		} 
@@ -71,7 +73,7 @@ int main(int argc, char *argv[]) {
 
 	// out of the while loop, so all of the processes are finished
 	printf("All processes finished without deadlock."); 
-	
+	return 0;
 }
 
 /**
@@ -200,6 +202,35 @@ int init( char *filename ) {
 	if( !(Available_tmp = malloc( resources * sizeof( int ) )))
 		return 8;
 
+  // open the config file
+	FILE *file;
+	if( !(file = fopen(filename,"r"))) {
+		printf("error: can't open file %s\n",filename);
+		return 9;
+	}
+	
+	char buffer[MAX];
+	
+	// parse the first line: number of resource types
+	fgets(buffer, MAX, file);
+	resources = atoi(buffer);
+	
+	// parse second line: number of instances of each resource type
+	fgets(buffer, MAX, file);
+	// split the line
+	
+	// parse third line: number of processes
+	fgets(buffer, MAX, file);
+	processes = atoi(buffer);
+	
+	// parse rest of lines: max requests by each process
+	while(fgets(buffer, MAX, file) != EOF) {
+		//split the line
+	}
+	
+	
+	printf("%d, %d", processes, resources);
+	
   // hardwired values
 	maxres[0]=6; maxres[1]=4; maxres[2]=7;
 	Available[0]=6; Available[1]=4; Available[2]=7;
@@ -215,6 +246,7 @@ int init( char *filename ) {
 	Max[2][1]=1; Allocation[2][1]=1; 
 	Max[2][2]=5; Allocation[2][2]=1; 
 	
+	fclose(file);
 	return 0;
 }
 
