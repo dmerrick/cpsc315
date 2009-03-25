@@ -337,7 +337,7 @@ void *requestResource( void *proc ) {
 		printf("Customer %d is requesting %d unit(s) from R%d.\n",process,Request[i],i);
 	}
   
-  /*
+  /* uncomment this if we're not using checkCompletion() and allocate()
   for(i=0; i<resources; i++)
     if( Request[i] > Available[i])
       return; // this process has to wait
