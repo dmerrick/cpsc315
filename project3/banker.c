@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 // constants
 #define TRUE 1
@@ -17,7 +18,11 @@
 // method signatures
 int bankers();
 void printResources();
-int init( char *filename );
+int init( char * );
+void updateNeed( int );
+void *requestResource( void * );
+int allocate( int, int * );
+int checkCompletion( int );
 
 // these values will be read from the configuration file
 int resources, processes;
@@ -26,13 +31,18 @@ int resources, processes;
 int *Available;
 int **Allocation;
 int **Max;
-int *Need;
-
-// the the list of all running processes
-int *Running;
+int **Need;
+int *Finish;
 
 // loop variables to comply with C90 standard
 int i,j; 
+
+// set up mutexes for threading
+pthread_mutex_t mutexAvailable;
+pthread_mutex_t mutexAllocation;
+pthread_mutex_t mutexMax;
+pthread_mutex_t mutexNeed;
+
 
 /**
  * Main method, reads from text file, initializes variables, and loops until finished.
@@ -50,25 +60,31 @@ int main(int argc, char *argv[]) {
 
 	// initialize running to true for all processes 
 	for( i=0; i<processes; i++)
-		Running[i] = TRUE;
+		Finish[i] = FALSE;
 
 	// start the main loop
 	int count = 0;
 	do { 
-
+		
 		// check the number of running processes
 		for( i=0; i<processes; i++ ) { 
-			if( Running[i] == TRUE ) 
-				count++; 
+			if( Finish[i] == FALSE ) {
+				count++;
+				//requestResource((void *)i);
+
+        
+        pthread_t threads[processes];
+	    	int return_code;
+				printf("Creating thread for process %d.\n", i);
+				return_code = pthread_create(&threads[i], NULL, requestResource, (void *)i);
+				if (return_code) {
+					printf("ERROR; return code from pthread_create() is %d\n", return_code);
+					exit(-1);
+				}
+				
+			}
 		} 
 
-		// run the algorithm	
-		bankers();
-
-		// spawn threads and request resourses here.
-
-		// temporary loop kill
-		count = 0;
 
 	} while( count != 0 );
 
@@ -91,25 +107,36 @@ int bankers() {
 	// assume the state is unsafe
 	int safe = FALSE;
 
-	// set up Available_tmp array
-	int *Available_tmp;
-	if( !(Available_tmp = malloc( resources * sizeof( int ) )))
+	// set up Work array
+	int *Work;
+	if( !(Work = malloc( resources * sizeof( int ) )))
 		return -1;
 
 	// copy the Available array into the temporary array
 	for( i=0; i<resources; i++ ) {
-		Available_tmp[i] = Available[i];
+		Work[i] = Available[i];
 	}
 
-	// look at each running process
+	// Find an index i such that...
 	for( i=0; i<processes; i++ ) {
-		if( Running[i] == TRUE ) {
-			if( ((Max[i][0] - Allocation[i][0]) <= Available_tmp[0]) /* && rest here */) {
-				for( j=0; j < resources; j++ ) {
-					Available_tmp[j] += Allocation[i][j];
+		// ...Finish[i] == FALSE and...
+		if( Finish[i] == FALSE ) {
+			// ...Need[i] <= Work
+			for( j=0; j<resources; j++ ) {
+				if( Need[i][j] > Work[j] ) {
+					printf("Result is: UNSAFE.");
+					printResources();
+					return safe;
 				}
-				safe = TRUE;
 			}
+
+			for( j=0; j < resources; j++ ) {
+				Work[j] += Allocation[i][j];
+				//Finish[j] = TRUE;
+			}
+			
+			// FIXME: does this go here?
+			safe = TRUE;
 		}
 	}
 
@@ -140,7 +167,7 @@ void printResources() {
 	printf("\n");
 
 	for( i=0; i<processes; i++) { 
-		if( Running[i] == TRUE ) {
+		if( Finish[i] == FALSE ) {
 			printf("P%d\t", i); 
 			for( j=0; j<resources; j++) 
 				printf("%d\t", Allocation[i][j]); 
@@ -155,7 +182,7 @@ void printResources() {
 	printf("\n");
 
 	for( i=0; i<processes; i++) { 
-		if( Running[i] == TRUE ) { 
+		if( Finish[i] == FALSE ) { 
 			printf("P%d\t", i); 
 			for( j=0; j<resources; j++) 
 				printf("%d\t", Max[i][j]); 
@@ -169,9 +196,14 @@ void printResources() {
 		printf("\tR%d", i);
 	printf("\n");
 
-	for( i=0; i<resources; i++ ) 
-		printf("\t%d", Need[i]); 
-	printf("\n"); 
+	for( i=0; i<processes; i++) { 
+		if( Finish[i] == FALSE ) { 
+			printf("P%d\t", i); 
+			for( j=0; j<resources; j++) 
+				printf("%d\t", Need[i][j]); 
+			printf("\n"); 
+		} 
+	}
 
 }
 
@@ -197,8 +229,8 @@ int init( char *filename ) {
 	fgets(buffer, MAX, file);
 	resources = atoi(buffer);
 
-	// now we can set up the Need array
-	if( !(Need = malloc( resources * sizeof( int ) )))
+	// now we can set up the Available array
+	if( !(Available = malloc( resources * sizeof( int ) )))
 		return 6;
 
 	// parse second line: number of instances of each resource type
@@ -207,7 +239,7 @@ int init( char *filename ) {
 	// we'll use a tokenizer to split the string on spaces
 	tmp = strtok(buffer," ");
 	while( tmp != NULL) {
-		Need[i] = atoi(tmp);
+		Available[i] = atoi(tmp);
 		tmp = strtok(NULL, " ");
 		i++;
 	}
@@ -222,7 +254,7 @@ int init( char *filename ) {
 		return 3;
 	for( i=0; i<processes; i++ )
 		if( !(Max[i] = malloc( resources * sizeof( int ) )))
-		return 4;
+	  	return 4;
 
 	// parse rest of lines: max requests by each process
 	i=0;
@@ -244,19 +276,150 @@ int init( char *filename ) {
 	if( !(Allocation = malloc( processes * sizeof( int* ) )))
 		return 1;
 	for( i=0; i<processes; i++ )
-		if(!(Allocation[i] = malloc( resources * sizeof( int ) )))
-		return 2;
+	 	if(!(Allocation[i] = malloc( resources * sizeof( int ) )))
+	  	return 2;
 
-	// set up Running array
-	if( !(Running = malloc( processes * sizeof( int ) )))
-		return 5;
-
-	// set up Available array
-	if( !(Available = malloc( resources * sizeof( int ) )))
+	// set up Need array (2D)
+	if( !(Need = malloc( processes * sizeof( int* ) )))
 		return 7;
+	for( i=0; i<processes; i++ )
+		if(!(Need[i] = malloc( resources * sizeof( int ) )))
+		  return 8;
+	
+	// fill in Need array for each process
+	for( i=0; i<processes; i++ ) {
+		//FIXME: why wont i increment past 0?
+		updateNeed(i);
+	}
+	
+	// quick hack
+	updateNeed(1);
+	updateNeed(2);
+	
+	// set up Finish array
+	if( !(Finish = malloc( processes * sizeof( int ) )))
+		return 5;
 
 	// close the file and exit cleanly
 	fclose(file);
 	return 0;
 }
+
+/**
+ * Updates calculates the current values inside the Need array for a given process.
+ *
+ * @param process number
+ */
+void updateNeed(int process) {
+	//printf("Updating Need for process %d.",process);
+	for( i=0; i<resources; i++ )
+		Need[process][i] = Max[process][i] - Allocation[process][i];
+}
+
+/**
+ * Creates a random request vector and requests it.
+ *
+ * @param process number
+ */
+void *requestResource( void *proc ) {
+
+  // sleep for a random period
+	sleep(rand() % 10);
+
+	int Request[resources];
+	int process = (int)proc;
+	
+	// generate a random request vector
+	for(i=0; i<resources; i++) {
+		Request[i] = rand() % Need[process][i];
+		// this will always be less than what we need, so we dont have to check
+		
+		printf("Customer %d is requesting %d unit(s) from R%d.\n",process,Request[i],i);
+	}
+  
+  /*
+  for(i=0; i<resources; i++)
+    if( Request[i] > Available[i])
+      return; // this process has to wait
+
+  for(i=0; i<resources; i++) {
+	  Available[i] -= Request[i];
+		Allocation[process][i] += Request[i];
+		Need[process][i] -= Request[i];
+	}
+	*/
+
+  // allocate the resource to the process
+	if( allocate( process, Request) == TRUE ) {
+		printf("Approved.\n");
+		if( checkCompletion( process ) == TRUE ) {
+			printf("\nProcess %d has completed!\n",process);
+		  sleep(rand() % 10);
+	  }
+	} else {
+		printf("Denied.\n");
+		//wait.
+		sleep(rand() % 10);
+	}
+
+  // exit the thread
+	pthread_exit(NULL);
+
+}
+
+/**
+ * Attempts to allocate a request vector to a process. 
+ *
+ * @param process number
+ * @param request vector 
+ * @return true if successfully allocated
+ */
+int allocate(int process, int *Request) {
+	 
+	for(i=0; i<resources; i++) {
+		pthread_mutex_lock( &mutexAllocation );
+		Allocation[process][i] += Request[i]; 
+		pthread_mutex_unlock( &mutexAllocation );
+		
+		pthread_mutex_lock( &mutexAvailable );
+		Available[i] -= Request[i];
+		pthread_mutex_unlock( &mutexAvailable );
+	} 
+	
+	if( bankers() == FALSE) {
+		for(i=0; i<resources; i++) { 
+			pthread_mutex_lock( &mutexAllocation );
+			Allocation[process][i] -= Request[i]; 
+			pthread_mutex_unlock( &mutexAllocation );
+			
+			pthread_mutex_lock( &mutexAvailable );
+			Available[i] += Request[i]; 
+			pthread_mutex_unlock( &mutexAvailable );
+		} 
+		return FALSE; 
+	} 
+	return TRUE; 
+} 
+
+/**
+ * Checks if a given process has completed.
+ *
+ * @param process number
+ * @return true if the process is complete
+ */
+int checkCompletion(int process) {
+	for( i=0; i<resources; i++) {
+		if( !(Allocation[process][i] == Max[process][i]))
+			return FALSE;
+			
+		for(i=0; i<resources; i++ ) { 
+			Available[i] += Max[process][i]; 
+		}
+		
+		// process is complete!
+		Finish[process] = TRUE; 
+		return TRUE; 
+	}
+}
+
 
