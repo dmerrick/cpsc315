@@ -4,6 +4,7 @@ Operating System Concepts - 8th Ed.
 
 === Chapter Eight ===
 8.11) First-fit:
+(Assuming we start at the beginning each time.)
 212KB goes into the 500KB partition. (288KB left)
 417KB goes into the 600KB partition. (183KB left)
 112KB goes into the 200KB partition. (88KB left)
@@ -21,4 +22,39 @@ Worst-fit:
 112KB goes into the 388KB partition. (276KB left)
 426KB can't fit anywhere.
 
-8.18) 
+8.18)
+page count = 32 = 2^5
+words per page = 1024 = 2^10 * 2^3 bits
+frame count = 16 = 2^4
+
+a)
+m=4
+n=12
+
+16 bits
+
+b)
+
+15 bits
+
+8.20a) There would be two memory lookups, one for the page table and one for the word in memory. This would take 200ms*2=400ms.
+
+b) Via the formula provided: (200ms)*(.75)+(200ms*2)*(1-.75) = 250ms
+
+8.23a) Segment 0 has base 219. Offset 420+219 = 649.
+
+b) Segment 1 has base 2300, offset 10+2300 = 2310.
+
+c) Segment 2 has no table entry, error.
+
+d) Segment 3 has base 1327, offset 400+1327 = 1727.
+
+e) Segment 4 has base 1952, but the offset 112 is greater than the length of the segment, error.
+
+8.27a) The "selector" portion of the logical address is looked at, which points to a descriptor table. The segment descriptor result from the table is combined with the logical address' offset into a 32-bit linear address.
+
+b) By adding this functionality into the Pentium architecture, it removes the need for similar functionality to be built via software. This allows for a simpler operating system and faster memory results.
+
+c) Every logical->physical address conversion requires this table lookup, which could be costly compared to memory implementations free from the descriptor table system.
+
+
