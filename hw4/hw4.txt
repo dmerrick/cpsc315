@@ -1,0 +1,24 @@
+Homework 4
+Dana Merrick - CPSC315
+Operating System Concepts - 8th Ed.
+
+=== Chapter Eight ===
+8.11) First-fit:
+212KB goes into the 500KB partition. (288KB left)
+417KB goes into the 600KB partition. (183KB left)
+112KB goes into the 200KB partition. (88KB left)
+426KB can't fit anywhere.
+
+Best-fit:
+212KB goes into the 300KB partition. (88KB left)
+417KB goes into the 500KB partition. (83KB left)
+112KB goes into the 200KB partition. (88KB left)
+426KB goes into the 600KB partition. (174KB left)
+
+Worst-fit:
+212KB goes into the 600KB partition. (388KB left)
+417KB goes into the 500KB partition. (83KB left)
+112KB goes into the 388KB partition. (276KB left)
+426KB can't fit anywhere.
+
+8.18) 
