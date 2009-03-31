@@ -1,0 +1,23 @@
+Programming Project 2
+
+Dana Merrick
+CPSC315 2/12/09
+
+1) How To Compile and Run
+Once you extract the tarball, all you need to do is run:
+
+make all
+
+This will build all of the needed binaries. 
+
+2) Requested Input From Professor Yoon
+
+Unfortunatly I didnt have time to finish it. Neither sending files nor recieving files works right now, but I made some headway towards the end and I think I could probably fix it.
+
+3) Output to Expect
+
+Incomplete attempts to send and receive data..
+
+4) Anything Else
+
+This was much harder than I expected! :-).
