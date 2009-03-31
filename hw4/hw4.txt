@@ -57,4 +57,33 @@ b) By adding this functionality into the Pentium architecture, it removes the ne
 
 c) Every logical->physical address conversion requires this table lookup, which could be costly compared to memory implementations free from the descriptor table system.
 
+=== Chapter Nine ===
+9.20) 11123456 is a 2^32 byte space, so m=32.
+Page size = 4096 = 2^12, so n=12.
 
+page number = m-n = 32-12 = 20 bits
+
+11123
+456
+
+9.21)
+
+9.23)
+
+9.28a) A faster CPU will help, but since the CPU is only being used 20% it won't necissarally have a significant effect.
+
+b) A larger paging disk will surely help, since the current disk is 97.7% used.
+
+c) Increasing the degree will not help, since the paging disk is over utilized as it is.
+
+d) Decreasing the degree of multiprogramming will help, because it will relax the strain on the paging disk.
+
+e) 
+
+f) Faster disks will surely help, as the time to retreive information off of the (over utilized) disks will be faster.
+
+g)
+
+h) Increasing the page size will help, as it will create more free space for the paging disk to use.
+
+9.31)
