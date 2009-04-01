@@ -24,18 +24,12 @@ Worst-fit:
 
 8.18)
 page count = 32 = 2^5
-words per page = 1024 = 2^10 * 2^3 bits
+words per page = 1024 = 2^10
 frame count = 16 = 2^4
 
-a)
-m=4
-n=12
+a) 16 bits
 
-16 bits
-
-b)
-
-15 bits
+b) 15 bits
 
 8.20a) There would be two memory lookups, one for the page table and one for the word in memory. This would take 200ms*2=400ms.
 
@@ -63,27 +57,32 @@ Page size = 4096 = 2^12, so n=12.
 
 page number = m-n = 32-12 = 20 bits
 
-11123
-456
+Therefore the last three digits 456 are the page offset, while the remaining 20 bits are the offset on the page table.
 
 9.21)
+200 nanoseconds = (100 nanoseconds)*(1-p) + 8ms*(1-0.7)*p + 20ms*(0.7)*p
+0.1 = -0.1p + 2400p + 14000p
+0.1 ~= 16400p
+p ~= 0.0006%
 
-9.23)
+9.28a) A faster CPU will help, but since the CPU is only being used 20% it won't necisaraly have a significant effect. Not a good option.
 
-9.28a) A faster CPU will help, but since the CPU is only being used 20% it won't necissarally have a significant effect.
-
-b) A larger paging disk will surely help, since the current disk is 97.7% used.
+b) A larger paging disk will not help, since the current disk is 97.7% used in terms of time and not in terms of space.
 
 c) Increasing the degree will not help, since the paging disk is over utilized as it is.
 
 d) Decreasing the degree of multiprogramming will help, because it will relax the strain on the paging disk.
 
-e) 
+e) Will improve CPU utilization since less pages need to be stored on the disk.
 
 f) Faster disks will surely help, as the time to retreive information off of the (over utilized) disks will be faster.
 
-g)
+g) Will improve CPU utilization as the CPU will aquire data much faster.
 
 h) Increasing the page size will help, as it will create more free space for the paging disk to use.
 
-9.31)
+9.31a) Initialize the counters to zero. When a new page is associated with a frame, increase the counters, and decrease the frame when the page is no longer required. The page with the smallest counter should be replaced.
+
+b) Like in class, I drew four boxes on a peice of paper and started filling in values according to the algorithm. I ended up counting thirteen page faults.
+
+c) The optimal algorithm ended up having eleven page faults.
