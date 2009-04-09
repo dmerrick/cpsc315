@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 
   // check that we opened correctly
   if ( dir_p == NULL ) {
-      printf(stderr, "opendir() failed\n");
+      fprintf(stderr, "opendir() failed\n");
       exit(-1);
   }
   
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   dirent_p = readdir(dir_p);
   // save the inode of the current directory
   parent_inode = dirent_p->d_ino;
-  last_inode = NULL;
+  last_inode = (ino_t)NULL;
 
   // loop through the tree until we get to the root
   while( last_inode != parent_inode ) {
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     
     // check that we opened correctly
     if ( dir_p == NULL ) {
-        printf(stderr, "opendir() failed\n");
+        fprintf(stderr, "opendir() failed\n");
         exit(-1);
     }
   
