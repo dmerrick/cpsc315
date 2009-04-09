@@ -1,0 +1,13 @@
+home
+ dmerrick
+  bin
+   .
+   ..
+
+save inode number of .
+save name of current dir
+move up a dir
+look for saved inode dir
+
+stop when new inode number equals saved inode number
+cat the strings together
