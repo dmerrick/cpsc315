@@ -8,7 +8,7 @@
 
 
 /**
- * Returns the full path of the current working directory.
+ * Prints the full path of the current working directory.
  */
 int main(int argc, char *argv[]) {
 
