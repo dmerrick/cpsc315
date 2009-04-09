@@ -12,26 +12,21 @@
  */
 int main(int argc, char *argv[]) {
 
-  // define needed variables
-  DIR *dir_p;
-  char *dir_name;
-
   char *start_location = ".";
 
-  // start setting up the loop variables...
+  // run on start location
+  parse_dir(start_location);
 
-  // open current directory
-  dir_p = opendir(start_location); 
-
-  parse_dir(dir_p);
-
-  closedir(dir_p);
 
   return 0;
 
 }
 
-void parse_dir( DIR *dir_p) {
+void parse_dir( char *dir_name ) {
+  DIR *dir_p;
+
+  dir_p = opendir(dir_name); 
+
   // check that we opened correctly
   if ( dir_p == NULL ) {
       printf(stderr, "opendir() failed\n");
@@ -39,11 +34,23 @@ void parse_dir( DIR *dir_p) {
   }
 
   struct dirent *dirent_p;
+  char *name;
 
   dirent_p = readdir( dir_p );
   while ( dirent_p != NULL ) {
-      printf( "%s\n", dirent_p->d_name );
-      dirent_p = readdir( dir_p );
+    name = dirent_p->d_name;
+
+    if (strcmp(name,".")!=0 && strcmp(name,"..")!=0) {
+      printf( "%s\n", name );
+
+      if (dirent_p->d_type == DT_DIR) {
+        parse_dir(name);
+      } 
+    }
+
+    // move to the next file in the dir
+    dirent_p = readdir( dir_p );
   }
 
+  closedir(dir_p);
 } 
