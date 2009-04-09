@@ -6,9 +6,6 @@
 #include <errno.h>
 #include <string.h>
 
-// file to implement stack
-#include "stack.c"
-
 
 /**
  * Returns the full path of the current working directory.
@@ -20,10 +17,7 @@ int main(int argc, char *argv[]) {
   struct dirent *dirent_p;
   ino_t last_inode, parent_inode;
   char *dir_name;
-  stack stk;
-
-  // initialize the stack
-  init(&stk);
+  char *output="";
 
   // start setting up the loop variables...
 
@@ -78,9 +72,7 @@ int main(int argc, char *argv[]) {
     dir_name = dirent_p->d_name;
 
     // print the directory name
-    printf( "%s", dir_name);
-    // push the directory name into the stack
-    push(&stk, dir_name);
+    asprintf( &output, "%s/%s", dir_name, output);
 
     //printf( "%s: %i\n", dirent_p->d_name, dirent_p->d_ino );
 
@@ -89,11 +81,7 @@ int main(int argc, char *argv[]) {
 
   }
 
-  puts("");
-  while( !empty(&stk) ) {
-    printf( "/%s", pop(&stk));
-  }
-
+  printf("%s\n", output);
   return 0;
 
 }
