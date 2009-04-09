@@ -15,14 +15,14 @@ int main(int argc, char *argv[]) {
   char *start_location = ".";
 
   // run on start location
-  parse_dir(start_location);
+  parse_dir(start_location,0);
 
 
   return 0;
 
 }
 
-void parse_dir( char *dir_name ) {
+void parse_dir( char *dir_name, int indent ) {
   DIR *dir_p;
 
   dir_p = opendir(dir_name); 
@@ -35,16 +35,22 @@ void parse_dir( char *dir_name ) {
 
   struct dirent *dirent_p;
   char *name;
+  int i;
 
   dirent_p = readdir( dir_p );
   while ( dirent_p != NULL ) {
     name = dirent_p->d_name;
 
     if (strcmp(name,".")!=0 && strcmp(name,"..")!=0) {
+
+      // add indents
+      for( i=0; i<indent; i++)
+        printf("  ");
+
       printf( "%s\n", name );
 
       if (dirent_p->d_type == DT_DIR) {
-        parse_dir(name);
+        parse_dir(name,indent+1);
       } 
     }
 
