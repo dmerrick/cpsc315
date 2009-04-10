@@ -1,13 +1,23 @@
-home
- dmerrick
-  bin
-   .
-   ..
+Programming Project 4
 
-save inode number of .
-save name of current dir
-move up a dir
-look for saved inode dir
+Dana Merrick
+CPSC315 4/9/09
 
-stop when new inode number equals saved inode number
-cat the strings together
+1) How To Compile and Run
+Once you extract the tarball, all you need to do is run:
+
+make all
+
+This will build all of the needed binaries.
+
+2) Requested Input From Professor Yoon
+
+N/A
+
+3) Output to Expect
+
+At the moment myls doesn't show the permissions correctly, but I'd like to fix  that with a half hour more time :-).
+
+4) Anything Else
+
+Sorry about last night! I ended up going to sleep. I woke up early this morning so I could get it in before you arrived.
