@@ -10,7 +10,7 @@
 #include <pwd.h>
 #include <grp.h>
 
-// method signature
+// method signatures
 void print_file( struct dirent* );
 int file_select( struct dirent* );
 
@@ -21,10 +21,9 @@ int main(int argc, char *argv[]) {
 
   // directory to list
   char *dir_name;
-
   // directory listing
   struct dirent **dir_list;
-
+  // file count and loop variable
   int count, i;
 
 
@@ -49,6 +48,11 @@ int main(int argc, char *argv[]) {
 
 }
 
+/**
+ * Used to ignore "." and ".." in scandir()
+ * @param dirent pointer
+ * @return bool
+ */
 int file_select(struct dirent *dirent_p) {
    
   if (strcmp(dirent_p->d_name,".")==0 || strcmp(dirent_p->d_name, "..")==0)
@@ -57,6 +61,10 @@ int file_select(struct dirent *dirent_p) {
     return 1;
 }
 
+/**
+ * Prints the stats of a dirent pointer in a similar way to "ls -l".
+ * @param dirent pointer
+ */
 void print_file( struct dirent *dirent_p) {
   char *name = dirent_p->d_name;
 
@@ -75,6 +83,7 @@ void print_file( struct dirent *dirent_p) {
   char time[80];
 
   // mode
+  // TODO: octal -> string
   unsigned long mode = buffer.st_mode;
 
   // links and size
@@ -84,6 +93,7 @@ void print_file( struct dirent *dirent_p) {
   // format time
   strftime(time, sizeof(time), "%Y-%m-%d %H:%M", localtime(&lastmod));
 
+  // print the info
   printf("%lo %ld %s %s %ld %s %s\n", mode, links, pwid, gid, size, time, name);
 
 }
