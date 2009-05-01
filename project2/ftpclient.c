@@ -24,6 +24,8 @@
 // function signatures
 int receiveFile(char *file);
 int sendFile(char *file);
+int initialize(char*);
+int interpret(char*, int);
 
 // global variables
 int server_sockfd;
@@ -50,7 +52,7 @@ int main(int argc, char *argv[])
   }
 
   for(EVER) {
-  int len;
+  int len, i;
 	char buf[BUFSIZ];
   char cmd[CMDSIZE]; // the command issued
 
@@ -120,7 +122,7 @@ int receiveFile(char *file) {
 
 
   // open file for reading
-  local = open(filename, O_RDONLY);
+  local = open(file, O_RDONLY);
 
   // verify file was opened correctly
   if (!local) {
@@ -212,6 +214,7 @@ int sendFile(char *file) {
   // exit cleanly
   return 0;
 }
+return 1;
 }
 
 int initialize(char *hostname) {
@@ -264,12 +267,12 @@ int interpret(char *buf, int len) {
     if (strcmp(cmd,"PUT") == 0) {
 
       // try and receive the file
-      return receiveFile(file_arg);
+      return sendFile(file_arg);
 
     } else if (strcmp(cmd,"GET") == 0) {
 
       // try and send the file
-      return sendFile(file_arg);
+      return receiveFile(file_arg);
 
     } else {
 

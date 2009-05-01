@@ -25,6 +25,8 @@
 // function signatures
 int receiveFile(char *file);
 int sendFile(char *file);
+int initialize(void);
+int interpret(char*, int);
 
 int server_sockfd, client_sockfd;
 socklen_t client_len;
@@ -185,6 +187,7 @@ int sendFile(char *file) {
   // exit cleanly
   return 0;
 }
+return 1;
 }
 
 int initialize(void) {
