@@ -25,6 +25,7 @@
 int receiveFile(char *file);
 int sendFile(char *file);
 
+// global variables
 int server_sockfd;
 struct sockaddr_in server_address;
 struct hostent *host; // the host
@@ -34,8 +35,7 @@ struct hostent *host; // the host
  */
 int main(int argc, char *argv[])
 {
-  int i; // for parsing the command
-	char file_arg[BUFSIZ]; // the argument passed from the client
+	//char file_arg[BUFSIZ]; // the argument passed from the client
 
   // check arguements are sane
 	if (argc != 2) {
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
   // setting up the socket...
   if (initialize(argv[1]) > 0) {
     perror("initialize error");
-    exit(1);
+    exit(2);
   }
 
   for(EVER) {
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
   char cmd[CMDSIZE]; // the command issued
 
 
-	if ((server_sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	if ((server_sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
 		perror("generate error");
 		exit(3);
 	}
@@ -86,8 +86,8 @@ int main(int argc, char *argv[])
         cmd[CMDSIZE-1] = '\0';
 
 
-  if(!strcmp("BYE", buf) /* || !strcmp("EOF", buf) */) {
-    write(STDOUT_FILENO, "BYE\n", 5);
+  if(!strcmp("BYE", buf)  || !strcmp("EOF", buf)) {
+    //write(STDOUT_FILENO, "BYE\n", 5);
     return 0;
   }
 
@@ -95,58 +95,6 @@ int main(int argc, char *argv[])
     perror("error interpreting data");
   }
 
-
-
-
-
-
-/*
-      // read from the socket
-			if ((len=read(server_sockfd, buf, BUFSIZ)) > 0) {
-        // send the data to stdout
-				write(STDOUT_FILENO, buf, len);
-
-		    for (i = CMDSIZE; i < len; ++i) {
-          // save the rest as the filename
-          file_arg[i-CMDSIZE]=buf[i];
-        }
-
-		    //write(server_sockfd, buf, len);
-
-        // debugging messages
-        //printf("DEBUG: file_arg=%s",file_arg);
-        //printf("DEBUG: cmd=%s\n",cmd);
-        
-        // start parsing the command
-        if (strcmp(cmd,"PUT") == 0) { 
-
-          //puts("Command was PUT!"); 
-          // try and send the file
-          if (sendFile(file_arg, server_sockfd))
-            break;
-    
-        } else if (strcmp(cmd,"GET") == 0) { 
-          
-          //puts("Command was GET!"); 
-          // try and receive the file
-          if (receiveFile(file_arg,server_sockfd))
-            break;
-    
-        } else if (strcmp(cmd,"BYE") == 0) { 
-		
-          puts("Command was BYE!"); 
-          exit(0);
-    
-        } else {
-    
-          printf("unrecognised command: %s",cmd);
-          // return to the loop
-
-        }
-
-		  }
-    }
-*/
 
 }
   // close the socket
@@ -168,10 +116,11 @@ int receiveFile(char *file) {
   int local; // the local file
 
   // debug message
-  puts("Command was GET!"); 
+  puts("Command was PUT!"); 
+
 
   // open file for reading
-  local = open(file, O_RDONLY);
+  local = open(filename, O_RDONLY);
 
   // verify file was opened correctly
   if (!local) {
@@ -217,11 +166,12 @@ int sendFile(char *file) {
   int file_len; // filesize
   int local; // the local file descriptor
   int i; // for EOF scan
-  char file_name; // local filename
-  // should be "from_client_<filename>"
+  char filename[BUFSIZ] = "from_server_";
+
+  strcat(filename,file);
 
   // debug message
-  puts("Command was PUT!"); 
+  puts("Command was GET!"); 
 
   recv(server_sockfd, file_buf, BUFSIZ, 0);
 
@@ -231,7 +181,7 @@ int sendFile(char *file) {
   }
 
   // open file or create it
-  local = open(file, O_WRONLY | O_CREAT | O_TRUNC, 00644);
+  local = open(filename, O_WRONLY | O_CREAT, 00644);
 
   // very we opened it correctly
   if (!local) {
