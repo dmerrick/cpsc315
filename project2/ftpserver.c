@@ -19,6 +19,8 @@
 
 // size of "put" and "get" plus nul
 #define CMDSIZE 4
+// for forEVER loop
+#define EVER ;;
 
 // function signatures
 int receiveFile(char *file);
@@ -36,7 +38,6 @@ int main(void)
 {
 	char buf[BUFSIZ];
 	int len;
-  int i;
 
   // setting up socket...
   if (initialize() > 0) {
@@ -45,7 +46,7 @@ int main(void)
   }
 
 	
-  for(;;) {
+  for(EVER) {
   
   if ((client_sockfd = accept(server_sockfd, 
 	    (struct sockaddr *) &client_address, &client_len)) < 0) {
