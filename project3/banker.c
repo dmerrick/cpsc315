@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
 
 // constants
 #define TRUE 1
@@ -324,7 +325,7 @@ void updateNeed(int process) {
 void *requestResource( void *proc ) {
 
   // sleep for a random period
-	sleep(rand() % 10);
+	sleep(1+(int)(10.0*(rand() / 10)));
 
 	int Request[resources];
 	int process = (int)proc;
@@ -420,6 +421,7 @@ int checkCompletion(int process) {
 		Finish[process] = TRUE; 
 		return TRUE; 
 	}
+  return TRUE; 
 }
 
 
