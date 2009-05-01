@@ -37,7 +37,6 @@ struct hostent *host; // the host
  */
 int main(int argc, char *argv[])
 {
-	//char file_arg[BUFSIZ]; // the argument passed from the client
 
   // check arguements are sane
 	if (argc != 2) {
@@ -45,30 +44,31 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-  // setting up the socket...
+  // set up the socket
   if (initialize(argv[1]) > 0) {
     perror("initialize error");
     exit(2);
   }
 
+  // infinite loop
   for(EVER) {
-  int len, i;
-	char buf[BUFSIZ];
-  char cmd[CMDSIZE]; // the command issued
+    int len, i;
+	  char buf[BUFSIZ];
+    char cmd[CMDSIZE]; // the command issued
 
 
-	if ((server_sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-		perror("generate error");
-		exit(3);
-	}
+	  if ((server_sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+		  perror("generate error");
+		  exit(3);
+	  }
 
-	if (connect(server_sockfd, (struct sockaddr *) &server_address, 
-   	    sizeof(server_address)) < 0) {
-		perror("connect error");
-		exit(4);
-	}
+	  if (connect(server_sockfd, (struct sockaddr *) &server_address, 
+   	      sizeof(server_address)) < 0) {
+		  perror("connect error");
+		  exit(4);
+	  }
 
-  // socket is set up
+    // socket is set up
 
     // draw prompt
 		write(STDOUT_FILENO, "> ", 3);
@@ -78,31 +78,33 @@ int main(int argc, char *argv[])
       // send the user input to to socket
 			send(server_sockfd, buf, len, 0);
 
-        // extract the command from the buffer
-     	  for (i = 0; i < CMDSIZE-1; ++i) {
-          // save the first for chars as a the command
-          // I used this instead of strncmp() so we could separate the arguements
-			    cmd[i] = toupper(buf[i]); // caps for easy parsing
-        }
-        // close off cmd with nul char
-        cmd[CMDSIZE-1] = '\0';
+      // extract the command from the buffer
+      for (i = 0; i < CMDSIZE-1; ++i) {
+        // save the first for chars as a the command
+        // I used this instead of strncmp() so we could separate the arguements
+		    cmd[i] = toupper(buf[i]); // caps for easy parsing
+      }
+      // close off cmd with nul char
+      cmd[CMDSIZE-1] = '\0';
 
 
-  if(!strcmp("BYE", buf)  || !strcmp("EOF", buf)) {
-    //write(STDOUT_FILENO, "BYE\n", 5);
-    return 0;
-  }
+      if(!strcmp("bye", buf)  || !strcmp("EOF", buf)) {
+        return 0;
+      }
 
-  if ( interpret(buf, len) > 0) {
-    perror("error interpreting data");
-  }
+      if ( interpret(buf, len) > 0) {
+        perror("error interpreting data");
+      }
 
 
-}
+    }
+
   // close the socket
 	close(server_sockfd);
-}
-  // and exit cleanly
+
+  }
+
+  // exit cleanly
 	return 0;
 }
 
@@ -118,15 +120,15 @@ int receiveFile(char *file) {
   int local; // the local file
 
   // debug message
-  puts("Command was PUT!"); 
-
+  //puts("Command was PUT!"); 
 
   // open file for reading
-  local = open(file, O_RDONLY);
+  local = open(file, O_RDONLY, 0);
 
   // verify file was opened correctly
   if (!local) {
     fprintf(stderr, "ERROR: local file could not be opened: %s\n", file);
+    // send error message to server
     send(server_sockfd, "ERROR", 6, 0);
     return 1;
   }
@@ -170,10 +172,11 @@ int sendFile(char *file) {
   int i; // for EOF scan
   char filename[BUFSIZ] = "from_server_";
 
+  // add the file prefix
   strcat(filename,file);
 
   // debug message
-  puts("Command was GET!"); 
+  //puts("Command was GET!"); 
 
   recv(server_sockfd, file_buf, BUFSIZ, 0);
 
@@ -188,35 +191,46 @@ int sendFile(char *file) {
   // very we opened it correctly
   if (!local) {
     fprintf(stderr, "ERROR: local file could not be opened: %s\n", file);
+    // send error message to server
     send(server_sockfd, "ERROR", 6, 0);
     return 2;
   }
 
+  // send ready message to client
   send(server_sockfd, "READY", 6, 0);
 
 
   // read the file data from the client
    while((file_len = recv(server_sockfd, file_buf, BUFSIZ, 0)) > 0) {
-    // write it to the terminal...
-    //write(STDOUT_FILENO, file_buf, file_len);
-    // ...and to the local file
-      write(local, file_buf, file_len);
+     // write it to the terminal...
+     //write(STDOUT_FILENO, file_buf, file_len);
+     // ...and to the local file
+     write(local, file_buf, file_len);
 
-    // scan for EOF
-    for(i=0; i<BUFSIZ; i++) {
-      if( file_buf[i]==EOF)
-        break;
-    }
+     // scan for EOF
+     for(i=0; i<BUFSIZ; i++) {
+       if( file_buf[i]==EOF)
+         break;
+     }
 
-  // close the file
-  close(local);
+     // close the file
+     close(local);
 
-  // exit cleanly
-  return 0;
+     // exit cleanly
+     return 0;
+
+  }
+
+  // we should never reach here
+  return 3;
 }
-return 1;
-}
 
+/**
+ * Sets up the socket.
+ *
+ * @param hostname
+ * @return status
+ */
 int initialize(char *hostname) {
   // get host by name
   host = gethostbyname(hostname);
@@ -232,53 +246,56 @@ int initialize(char *hostname) {
   memcpy(&server_address.sin_addr, host->h_addr, host->h_length);
   server_address.sin_port = htons(6996);
 
+  // exit cleanly
   return 0;
 }
 
+/**
+ * Interprets the data from the user into a command, and then executes the corresponding function.
+ *
+ * @param buffer data
+ * @param length of buffer
+ * @return status
+ */ 
 int interpret(char *buf, int len) {
   char cmd[CMDSIZE]; // this string will hold the command issued
   char file_arg[BUFSIZ]; // the arguement passed from the client
   int i; // for loops
 
-    // split the buffer into two parts
-    for (i = 0; i < CMDSIZE-1; ++i) {
-      // save the first for chars as a the command
-      // I used this instead of strncmp() so we could separate the arguements
-      cmd[i] = toupper(buf[i]); // caps for easy parsing
-    }
-    // close off cmd with nul char
-    cmd[CMDSIZE-1] = '\0';
+  // split the buffer into two parts
+  for (i = 0; i < CMDSIZE-1; ++i) {
+    // save the first for chars as a the command
+    // I used this instead of strncmp() so we could separate the arguements
+    cmd[i] = toupper(buf[i]); // caps for easy parsing
+  }
+  // close off cmd with nul char
+  cmd[CMDSIZE-1] = '\0';
 
-    for (i = CMDSIZE; i < len; ++i) {
-      // save the rest as the filename
-      file_arg[i-CMDSIZE]=buf[i];
-    }
+  for (i = CMDSIZE; i < len; ++i) {
+    // save the rest as the filename
+    file_arg[i-CMDSIZE]=buf[i];
+  }
 
-   file_arg[len-CMDSIZE] = '\0';
+ file_arg[len-CMDSIZE] = '\0';
 
-    // send the command back to the client
-    //write(client_sockfd, cmd, CMDSIZE);
+  // start parsing the command
+  if (strcmp(cmd,"PUT") == 0) {
 
-    // debugging messages
-    //printf("DEBUG: file_arg=%s",file_arg);
-    //printf("DEBUG: cmd=%s\n",cmd);
+    // try and receive the file
+    return sendFile(file_arg);
 
-    // start parsing the command
-    if (strcmp(cmd,"PUT") == 0) {
+  } else if (strcmp(cmd,"GET") == 0) {
 
-      // try and receive the file
-      return sendFile(file_arg);
+    // try and send the file
+    return receiveFile(file_arg);
 
-    } else if (strcmp(cmd,"GET") == 0) {
+  } else {
 
-      // try and send the file
-      return receiveFile(file_arg);
+    // we got something we cant interpret
+    printf("unrecognised command: %s",cmd);
+    return 1;
 
-    } else {
+  }
 
-      printf("unrecognised command: %s",cmd);
-      return 1;
-
-    }
 }
 
