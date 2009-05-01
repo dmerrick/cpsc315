@@ -101,6 +101,7 @@ int receiveFile(char *file) {
   // verify file was opened correctly
   if (!local) {
     fprintf(stderr, "ERROR: local file could not be opened: %s\n", file);
+    // send error message to client
     send(client_sockfd, "ERROR", 6, 0);
     return 1;
   }
@@ -187,14 +188,16 @@ int sendFile(char *file) {
         break;
     }
 
-  // close the file
-  close(local);
+    // close the file
+    close(local);
 
-  // exit cleanly
-  return 0;
-}
-// we should never reach here
-return 3;
+    // exit cleanly
+    return 0;
+
+  }
+
+  // we should never reach here
+  return 3;
 }
 
 /**
