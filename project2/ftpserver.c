@@ -36,8 +36,6 @@ struct sockaddr_in client_address, server_address;
  */
 int main(void)
 {
-	char buf[BUFSIZ];
-	int len;
 
   // setting up socket...
   if (initialize() > 0) {
@@ -47,6 +45,8 @@ int main(void)
 
 	
   for(EVER) {
+	char buf[BUFSIZ];
+	int len;
   
   if ((client_sockfd = accept(server_sockfd, 
 	    (struct sockaddr *) &client_address, &client_len)) < 0) {
@@ -57,9 +57,9 @@ int main(void)
 
   // socket set up, let's start working with it
 
-	while ((len=recv(client_sockfd, buf, BUFSIZ, 0)) > 0) {
+	if ((len=recv(client_sockfd, buf, BUFSIZ, 0)) > 0) {
 
-  if(!strcmp("BYE", buf) /* || !strcmp("EOF", buf) */) {
+  if(!strcmp("BYE", buf) || !strcmp("EOF", buf) ) {
     return 0;
   }
 
@@ -83,7 +83,7 @@ int main(void)
  * @param filename string
  * @return status
  */
-int sendFile(char *file) {
+int receiveFile(char *file) {
   char file_buf[BUFSIZ]; // buffer for data to send
   int file_len; // filesize
   int local; // the local file
@@ -92,7 +92,7 @@ int sendFile(char *file) {
   puts("Command was GET!"); 
 
   // open file for reading
-  local = open(file, O_RDONLY);
+  local = open(file, O_RDONLY, 0);
 
   // verify file was opened correctly
   if (!local) {
@@ -115,7 +115,7 @@ int sendFile(char *file) {
   while ((file_len=read(local, file_buf, BUFSIZ)) > 0) {
     // write to the socket
     if (send(client_sockfd,file_buf,file_len,0) < 0) {
-      fprintf(stderr, "ERROR: error writing to socket");
+      perror("ERROR: error writing to socket");
       break;
     }
   }
@@ -134,13 +134,14 @@ int sendFile(char *file) {
  * @param client socket file descriptor
  * @return status
  */
-int receiveFile(char *file) {
+int sendFile(char *file) {
   char file_buf[BUFSIZ]; // buffer for data to send
   int file_len; // filesize
   int local; // the local file descriptor
   int i; // for EOF scan
-  char file_name; // local filename
-  // should be "from_client_<filename>"
+  char filename[BUFSIZ]="from_client_";
+
+  strcat(filename,file);
 
   // debug message
   puts("Command was PUT!"); 
@@ -153,7 +154,7 @@ int receiveFile(char *file) {
   }
 
   // open file or create it
-  local = open(file, O_WRONLY | O_CREAT | O_TRUNC, 00644);
+  local = open(filename, O_WRONLY | O_CREAT, 00644);
 
   // very we opened it correctly
   if (!local) {
