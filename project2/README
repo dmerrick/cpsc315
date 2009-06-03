@@ -1,7 +1,7 @@
 Programming Project 2
 
 Dana Merrick
-CPSC315 2/12/09
+CPSC315 2/1/09
 
 1) How To Compile and Run
 Once you extract the tarball, all you need to do is run:
@@ -12,12 +12,9 @@ This will build all of the needed binaries.
 
 2) Requested Input From Professor Yoon
 
-Unfortunatly I didnt have time to finish it. Neither sending files nor recieving files works right now, but I made some headway towards the end and I think I could probably fix it.
+None, thanks for the help!
 
 3) Output to Expect
 
-Incomplete attempts to send and receive data..
+The program works for the small files, but won't correctly send the medium or large files. Increasing the buffer size removes the runtime errors, but the files still don't send correctly.
 
-4) Anything Else
-
-This was much harder than I expected! :-).

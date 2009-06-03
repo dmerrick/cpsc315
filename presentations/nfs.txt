@@ -1,0 +1,35 @@
+
+nfs is short for "network file system." it's a network file system protocol that allows a client computer to access files over a network as easily as if the network drives are local to the machine.
+
+while nfs is generally used on UNIX-like systems, practically every major OS has support, including windows, macos, solaris and openvms.
+
+== benefits ==
+
+local workstations use less disk space
+
+eliminates the need for separate home directories on each machine.
+
+storage devices like floppy disks and cdrom drives can be shared between machines over the network.
+
+== history ==
+
+nfs was developed by sun microsystems in 1984. its original specifications are in RFC 1094, the existance of which allows anyone to implement the protocol.
+
+version one was released only as an in-house expiriment for sun. version 2 was released to the outside world in march of 1989. it operated entirely over UDP. the original design goal was to keep the procol stateless, with things like locking implemented outside of the protocol itself.
+
+in june of 1995, nfsv3 was released under a new RFC (1813), adding support for 64 bit file sizes and asychronous server writes, among other improvements. by this time many vendors had added TCP support, so sun released support for tcp as a tranport layer with version 3. this made it possible to use NFS over a WAN.
+
+version 4, the most recent version, was released in December 2000 under RFC 3010, and was revised in April 2003 with yet another RFC.
+
+influenced by AFS (the andrew file system) and CIFS (common internet file system), improvements were in performance and security, as well as introducing a stateful protocol.
+
+version 4.1 has been approved by the internet engineering task force, but has not received an RFC number yet. the new spec is notorious for being the longest approved document yet, at 612 pages.
+
+== implementation ==
+the server runs an nfs daemon to make data available to client machines.
+
+the server administrators configure the daemon to specify what to files to make available, as well as how to recognise and approve client connections.
+
+the client requests access to the shared data through the nfs daemon, generally via the unix mount command.
+
+if successful, the client can view and interact with the shared data like it was a local drive.

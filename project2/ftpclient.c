@@ -19,6 +19,7 @@
 
 // size of "put" and "get" plus nul
 #define CMDSIZE 4
+// for forEVER loop
 #define EVER ;;
 
 // function signatures
@@ -282,12 +283,12 @@ int interpret(char *buf, int len) {
   if (strcmp(cmd,"PUT") == 0) {
 
     // try and receive the file
-    return sendFile(file_arg);
+    return receiveFile(file_arg);
 
   } else if (strcmp(cmd,"GET") == 0) {
 
     // try and send the file
-    return receiveFile(file_arg);
+    return sendFile(file_arg);
 
   } else {
 
