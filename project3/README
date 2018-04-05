@@ -5,7 +5,7 @@ CPSC315 3/9/9
 
 1) How To Compile and Run
 
-There is only one source file, so running something like "gcc -o banker banker.c" should work fine.
+There is only one source file, so running something like "gcc -pthread -o banker banker.c" should work fine.
 
 You provide your configuration file as an arguement. The program does NOT perform sanity checks on your config file, so please use valid input :D.
 
